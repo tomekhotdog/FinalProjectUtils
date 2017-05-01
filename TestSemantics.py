@@ -194,6 +194,10 @@ class TestSemantics(unittest.TestCase):
         self.assertFalse(Semantics.conflict_free(baba, [a, c, d, e]), "Expected: NOT conflict free")
         self.assertFalse(Semantics.conflict_free(baba, [a, b, c, d, e]), "Expected: NOT conflict free")
 
+######################################################
+# Testing of Semantic class object elements equality #
+######################################################
+
     def test_Attack_equality(self):
         attack1 = Semantics.Attack(a, [b, c])
         attack2 = Semantics.Attack(a, [c, b])
@@ -213,6 +217,35 @@ class TestSemantics(unittest.TestCase):
         self.assertNotEqual(s2, s3)
 
         self.assertTrue(s1 in set([s1]))
+
+    def test_Rule_equality(self):
+        rule1 = Semantics.Rule(a, [b, c, d])
+        rule2 = Semantics.Rule(a, [d, b, c])
+        rule3 = Semantics.Rule(b, [b, c, d])
+
+        self.assertEqual(rule1, rule2)
+        self.assertNotEqual(rule1, rule3)
+        self.assertNotEqual(rule2, rule3)
+
+    def test_Contrary_equality(self):
+        contrary1 = Semantics.Contrary(a, b)
+        contrary2 = Semantics.Contrary(a, b)
+        contrary3 = Semantics.Contrary(a, c)
+
+        self.assertEqual(contrary1, contrary2)
+        self.assertNotEqual(contrary1, contrary3)
+        self.assertNotEqual(contrary2, contrary3)
+
+    def test_Random_Variables_equality(self):
+        rv1 = Semantics.RandomVariable(a, 0.2)
+        rv2 = Semantics.RandomVariable(a, 0.20)
+        rv3 = Semantics.RandomVariable(b, 0.2)
+
+        self.assertEqual(rv1, rv2)
+        self.assertNotEqual(rv1, rv3)
+        self.assertNotEqual(rv2, rv3)
+
+#############################################
 
     def test_generate_attacks(self):
         baba = ExampleFrameworks.larger_framework()

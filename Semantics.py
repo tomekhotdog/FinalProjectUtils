@@ -69,6 +69,14 @@ class Rule:
         self.head = head
         self.body = body
 
+    def __hash__(self):
+        return hash(self.head) + sum([hash(item) for item in self.body])
+
+    def __eq__(self, other):
+        head_equal = self.head == other.head
+        body_equal = all([elem in other.body for elem in self.body]) and len(self.body) == len(other.body)
+        return head_equal and body_equal
+
 
 class Contrary:
     def __init__(self, assumption, contrary):
@@ -78,6 +86,12 @@ class Contrary:
 
         self.assumption = assumption
         self.contrary = contrary
+
+    def __hash__(self):
+        return hash(self.assumption) + hash(self.contrary)
+
+    def __eq__(self, other):
+        return self.assumption == other.assumption and self.contrary == other.contrary
 
 
 class RandomVariable:
@@ -89,6 +103,12 @@ class RandomVariable:
         self.sentence = sentence
         self.probability = probability
 
+    def __hash__(self):
+        return hash(self.sentence) + hash(self.probability)
+
+    def __eq__(self, other):
+        return self.sentence == other.sentence and self.probability == other.probability
+
 
 # A set of sentences, 'support', derives the contrary of the 'attacked' sentence
 class Attack:
@@ -97,10 +117,7 @@ class Attack:
         self.support = support
 
     def __hash__(self):
-        cumulative_hash = 0
-        for item in self.support:
-            cumulative_hash += hash(item)
-        return hash(self.attacked) + cumulative_hash
+        return hash(self.attacked) + sum([hash(item) for item in self.support])
 
     def __eq__(self, other):
         return (self.attacked == other.attacked and
