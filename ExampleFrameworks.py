@@ -101,6 +101,7 @@ def s_framework():
 
 ########################################################################################
 
+
 # Language property does not cover framework
 def invalid_BABA_framework():
     language = []

@@ -20,6 +20,7 @@ bd = Semantics.Sentence('bd')
 sentence = Semantics.Sentence('sentence')
 _sentence = Semantics.Sentence('_sentence')
 
+
 class TestBABAProgramParser(unittest.TestCase):
 
     def test_string_constructor(self):
@@ -98,3 +99,16 @@ class TestBABAProgramParser(unittest.TestCase):
         self.assertEqual(Parser.extract_from_parentheses('myAsm(  abc  ).'), 'abc')
         self.assertEqual(Parser.extract_from_parentheses('myAsm(arg).'), 'arg')
         self.assertEqual(Parser.extract_from_parentheses('myAsm(ARG).'), 'ARG')
+
+    def test_extract_from_square_brackets(self):
+        self.assertEqual(Parser.extract_from_square_brackets(' [ a ] '), 'a')
+        self.assertEqual(Parser.extract_from_square_brackets('[abcd].'), 'abcd')
+        self.assertEqual(Parser.extract_from_square_brackets('[ abb]'), 'abb')
+        self.assertEqual(Parser.extract_from_square_brackets('[]'), '')
+
+    def test_parse_program(self):
+        BABAParser = Parser.BABAProgramParser(string=program_1_string)
+        BABA = BABAParser.parse()
+        stable_sets = Semantics.stable(BABA)
+        self.assertTrue(True)
+        # TODO: tests on BABA object (integration tests for semantic sets).
