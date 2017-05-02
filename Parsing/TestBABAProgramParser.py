@@ -4,13 +4,19 @@ import Semantics
 
 program_1_string = "myAsm(a).\nmyAsm(b).\nmyAsm(c).\nmyAsm(d).\nmyAsm(e).\n" \
          "contrary(a, _a).\ncontrary(b, _b).\ncontrary(c, _c).\ncontrary(d, _d)." \
-         "\ncontrary(e, _e).\nmyRule(_b, [a]).\nmyRule(_a, [b])." \
-         "\nmyRule(_c, [d]).\nmyRule(_d, [e]).\nmyRule(_e, [d])."
+         "\ncontrary(e, _e).\nmyRule(_b, [c]).\nmyRule(_a, [b])." \
+         "\nmyRule(_c, [d]).\nmyRule(_d, [e]).\nmyRule(_e, [d]).\nmyRV(t, 0.5)."
 
 a = Semantics.Sentence('a')
 b = Semantics.Sentence('b')
 c = Semantics.Sentence('c')
 d = Semantics.Sentence('d')
+e = Semantics.Sentence('e')
+_a = Semantics.Sentence('_a')
+_b = Semantics.Sentence('_b')
+_c = Semantics.Sentence('_c')
+_d = Semantics.Sentence('_d')
+_e = Semantics.Sentence('_e')
 t = Semantics.Sentence('t')
 _a = Semantics.Sentence('_a')
 abc = Semantics.Sentence('abc')
@@ -106,9 +112,42 @@ class TestBABAProgramParser(unittest.TestCase):
         self.assertEqual(Parser.extract_from_square_brackets('[ abb]'), 'abb')
         self.assertEqual(Parser.extract_from_square_brackets('[]'), '')
 
-    def test_parse_program(self):
-        BABAParser = Parser.BABAProgramParser(string=program_1_string)
-        BABA = BABAParser.parse()
-        stable_sets = Semantics.stable(BABA)
-        self.assertTrue(True)
-        # TODO: tests on BABA object (integration tests for semantic sets).
+    def test_parse_program_from_string(self):
+        parser = Parser.BABAProgramParser(string=program_1_string)
+        baba = parser.parse()
+        self.assertTrue(all([elem in baba.language for elem in [a, _a, b, _b, c, _c, d, _d, e, _e]]))
+        self.assertEqual(11, len(baba.language))
+        self.assertTrue(all([elem in baba.assumptions for elem in [a, b, c, d, e]]))
+        self.assertEqual(5, len(baba.assumptions))
+        self.assertTrue(all([elem in baba.contraries for elem in [a, b, c, d, e]]))
+        self.assertEqual(5, len(baba.contraries))
+        self.assertIn(Semantics.RandomVariable(t, 0.5), baba.random_variables)
+        self.assertEqual(1, len(baba.random_variables))
+        self.assertEqual(5, len(baba.rules))
+
+    def test_parse_program_from_file(self):
+        parser = Parser.BABAProgramParser(filename='BABA_program_1')
+        baba = parser.parse()
+        self.assertTrue(all([elem in baba.language for elem in [a, _a, b, _b, c, _c, d, _d, e, _e]]))
+        self.assertEqual(11, len(baba.language))
+        self.assertTrue(all([elem in baba.assumptions for elem in [a, b, c, d, e]]))
+        self.assertEqual(5, len(baba.assumptions))
+        self.assertTrue(all([elem in baba.contraries for elem in [a, b, c, d, e]]))
+        self.assertEqual(5, len(baba.contraries))
+        self.assertIn(Semantics.RandomVariable(t, 0.5), baba.random_variables)
+        self.assertEqual(1, len(baba.random_variables))
+        self.assertEqual(5, len(baba.rules))
+
+    def test_integration_stable_sets(self):
+        parser = Parser.BABAProgramParser(string=program_1_string)
+        baba = parser.parse()
+        stable_sets = Semantics.stable(baba)
+        self.assertEqual(2, len(stable_sets))
+        self.assertTrue(all([(elem in stable_sets[0].elements or elem in stable_sets[1].elements) for elem in [a, c, e]]))
+        self.assertTrue(all([(elem in stable_sets[0].elements or elem in stable_sets[1].elements) for elem in [b, d]]))
+
+    def test_integration_complete_sets(self):
+        parser = Parser.BABAProgramParser(filename='BABA_program_2')
+        baba = parser.parse()
+        complete_sets = Semantics.complete(baba)
+        self.assertEqual(6, len(complete_sets))

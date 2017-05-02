@@ -63,6 +63,9 @@ class Sentence:
     def __eq__(self, other):
         return self.symbol == other.symbol
 
+    def __str__(self):
+        return self.symbol
+
 
 class Rule:
     def __init__(self, head, body=[]):
@@ -76,6 +79,9 @@ class Rule:
         head_equal = self.head == other.head
         body_equal = all([elem in other.body for elem in self.body]) and len(self.body) == len(other.body)
         return head_equal and body_equal
+
+    def __str__(self):
+        return str(self.head) + " :- " + ', '.join([str(elem) for elem in self.body])
 
 
 class Contrary:
@@ -93,6 +99,9 @@ class Contrary:
     def __eq__(self, other):
         return self.assumption == other.assumption and self.contrary == other.contrary
 
+    def __str__(self):
+        return "~" + str(self.assumption) + " = " + str(self.contrary)
+
 
 class RandomVariable:
     def __init__(self, sentence, probability=1.0):
@@ -108,6 +117,9 @@ class RandomVariable:
 
     def __eq__(self, other):
         return self.sentence == other.sentence and self.probability == other.probability
+
+    def __str__(self):
+        return "(" + str(self.sentence) + ", " + str(self.probability) + ")"
 
 
 # A set of sentences, 'support', derives the contrary of the 'attacked' sentence
@@ -136,6 +148,9 @@ class SemanticSet:
     def __eq__(self, other):
         return all([elem in other.elements for elem in self.elements]) \
                and len(self.elements) == len(other.elements)
+
+    def __str__(self):
+        return "[" + ', '.join([str(elem) for elem in self.elements]) + "]"
 
 
 class InvalidBABAException(Exception):

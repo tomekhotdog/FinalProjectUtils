@@ -194,9 +194,9 @@ class TestSemantics(unittest.TestCase):
         self.assertFalse(Semantics.conflict_free(baba, [a, c, d, e]), "Expected: NOT conflict free")
         self.assertFalse(Semantics.conflict_free(baba, [a, b, c, d, e]), "Expected: NOT conflict free")
 
-######################################################
+############################################################
 # Testing of Semantic class object elements equality #
-######################################################
+############################################################
 
     def test_Attack_equality(self):
         attack1 = Semantics.Attack(a, [b, c])
@@ -245,7 +245,41 @@ class TestSemantics(unittest.TestCase):
         self.assertNotEqual(rv1, rv3)
         self.assertNotEqual(rv2, rv3)
 
-#############################################
+############################################################
+
+############################################################
+# Testing of Semantic class object elements str() function #
+############################################################
+
+    def test_Sentence_str_function(self):
+        self.assertEqual(str(a), "a")
+        self.assertEqual(str(b), "b")
+        self.assertEqual(str(c), "c")
+
+    def test_Rule_str_function(self):
+        rule1 = Semantics.Rule(a, [b, c])
+        self.assertEqual(str(rule1), "a :- b, c")
+        rule2 = Semantics.Rule(b, [c, d, e])
+        self.assertEqual(str(rule2), "b :- c, d, e")
+        rule3 = Semantics.Rule(a, [])
+        self.assertEqual(str(rule3), "a :- ")
+
+    def test_Contrary_str_function(self):
+        self.assertEqual(str(Semantics.Contrary(a, b)), "~a = b")
+        self.assertEqual(str(Semantics.Contrary(b, d)), "~b = d")
+        self.assertEqual(str(Semantics.Contrary(c, a)), "~c = a")
+
+    def test_RandomVariable_str_function(self):
+        self.assertEqual(str(Semantics.RandomVariable(a, 0.5)), "(a, 0.5)")
+        self.assertEqual(str(Semantics.RandomVariable(b, 1)), "(b, 1)")
+        self.assertEqual(str(Semantics.RandomVariable(c, 0.54321)), "(c, 0.54321)")
+
+    def test_SemanticSet_str_function(self):
+        self.assertEqual(str(Semantics.SemanticSet([a, b, c, d])), "[a, b, c, d]")
+        self.assertEqual(str(Semantics.SemanticSet([e])), "[e]")
+        self.assertEqual(str(Semantics.SemanticSet([e, d, c, b, a])), "[e, d, c, b, a]")
+
+############################################################
 
     def test_generate_attacks(self):
         baba = ExampleFrameworks.larger_framework()

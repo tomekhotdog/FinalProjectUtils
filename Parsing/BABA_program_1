@@ -8,8 +8,9 @@ contrary(b, _b).
 contrary(c, _c).
 contrary(d, _d).
 contrary(e, _e).
-myRule(_b, [a]).
 myRule(_a, [b]).
+myRule(_b, [c]).
 myRule(_c, [d]).
 myRule(_d, [e]).
 myRule(_e, [d]).
+myRV(t, 0.5).

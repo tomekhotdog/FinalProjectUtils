@@ -40,10 +40,10 @@ class BABAProgramParser:
     def parse_program(self, program):
         self.reset_program_elements()
 
-        rules = [] # Parse rules at the end
+        rules = []  # Parse rules at the end
 
         for line in program:
-            print(line)
+
             if matches_rule_declaration(line):
                 rules.append(line)
 
@@ -60,7 +60,7 @@ class BABAProgramParser:
             elif matches_random_variable_declaration(line):
                 rv = extract_random_variable(line)
                 self.random_variables.append(rv)
-                self.language.append(rv)
+                self.language.append(rv.sentence)
 
         for rule in rules:
             extracted_rule = extract_rule(rule)
