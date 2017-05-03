@@ -50,30 +50,29 @@ class TestSemantics(unittest.TestCase):
         self.assertRaises(Semantics.InvalidContraryException, invalid_contrary)
 
     def test_random_variable_initialises_with_probability(self):
-        sentence = Semantics.Sentence('a')
-        probability = 0.5
-        rv = Semantics.RandomVariable(sentence, probability)
+        rv = Semantics.Sentence('a', random_variable=True, negation=True)
 
-        self.assertEqual(sentence, rv.sentence)
-        self.assertEqual(probability, rv.probability)
+        self.assertEqual('a', rv.symbol)
+        self.assertEqual(True, rv.random_variable)
+        self.assertEqual(True, rv.negation)
 
-    def test_random_variable_valid_probability(self):
-        def invalid_negative_random_variable():
-            Semantics.RandomVariable('a', -0.3)
-
-        def invalid_greater_than_one_random_variable():
-            Semantics.RandomVariable('a', 1.0001)
-
-        def valid_zero_random_variable():
-            Semantics.RandomVariable('a', 0)
-
-        def valid_one_random_variable():
-            Semantics.RandomVariable('a', 1.0)
-
-        self.assertRaises(Semantics.InvalidRandomVariableException, invalid_negative_random_variable)
-        self.assertRaises(Semantics.InvalidRandomVariableException, invalid_greater_than_one_random_variable)
-        valid_zero_random_variable()
-        valid_one_random_variable()
+    # def test_random_variable_valid_probability(self):
+    #     def invalid_negative_random_variable():
+    #         Semantics.RandomVariable('a', -0.3)
+    #
+    #     def invalid_greater_than_one_random_variable():
+    #         Semantics.RandomVariable('a', 1.0001)
+    #
+    #     def valid_zero_random_variable():
+    #         Semantics.RandomVariable('a', 0)
+    #
+    #     def valid_one_random_variable():
+    #         Semantics.RandomVariable('a', 1.0)
+    #
+    #     self.assertRaises(Semantics.InvalidRandomVariableException, invalid_negative_random_variable)
+    #     self.assertRaises(Semantics.InvalidRandomVariableException, invalid_greater_than_one_random_variable)
+    #     valid_zero_random_variable()
+    #     valid_one_random_variable()
 
     def test_BABA_language_covers_all_sentences(self):
         ExampleFrameworks.valid_BABA_framework()
@@ -237,9 +236,9 @@ class TestSemantics(unittest.TestCase):
         self.assertNotEqual(contrary2, contrary3)
 
     def test_Random_Variables_equality(self):
-        rv1 = Semantics.RandomVariable(a, 0.2)
-        rv2 = Semantics.RandomVariable(a, 0.20)
-        rv3 = Semantics.RandomVariable(b, 0.2)
+        rv1 = Semantics.Sentence('a', random_variable=True)
+        rv2 = Semantics.Sentence('a', random_variable=True)
+        rv3 = Semantics.Sentence('b', random_variable=True)
 
         self.assertEqual(rv1, rv2)
         self.assertNotEqual(rv1, rv3)
@@ -270,9 +269,9 @@ class TestSemantics(unittest.TestCase):
         self.assertEqual(str(Semantics.Contrary(c, a)), "~c = a")
 
     def test_RandomVariable_str_function(self):
-        self.assertEqual(str(Semantics.RandomVariable(a, 0.5)), "(a, 0.5)")
-        self.assertEqual(str(Semantics.RandomVariable(b, 1)), "(b, 1)")
-        self.assertEqual(str(Semantics.RandomVariable(c, 0.54321)), "(c, 0.54321)")
+        self.assertEqual(str(Semantics.Sentence('a', random_variable=True, negation=True)), "~a")
+        self.assertEqual(str(Semantics.Sentence('b', random_variable=True, negation=False)), "b")
+        self.assertEqual(str(Semantics.Sentence('c', random_variable=True, negation=True)), "~c")
 
     def test_SemanticSet_str_function(self):
         self.assertEqual(str(Semantics.SemanticSet([a, b, c, d])), "[a, b, c, d]")
@@ -445,3 +444,7 @@ class TestSemantics(unittest.TestCase):
         sceptically_preferred_sets = Semantics.sceptically_preferred(s_baba)
         self.assertIn(Semantics.SemanticSet([f]), sceptically_preferred_sets)
         self.assertEqual(1, len(sceptically_preferred_sets))
+
+    def test_valid_cow_framework_formulation(self):
+        baba = ExampleFrameworks.cow_framework()
+        baba.validate()

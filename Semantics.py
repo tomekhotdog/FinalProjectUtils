@@ -9,12 +9,13 @@ class BABA:
     # rules = [Rule(Sentence, [Sentence])...]
     # contraries = {Sentence (assumption) : Contrary}
     # random_variables = [RandomVariable(Sentence, Probability)...]
-    def __init__(self, language, rules, assumptions, contraries, random_variables):
+    def __init__(self, language, rules, assumptions, contraries, random_variables, BN):
         self.language = language
         self.rules = rules
         self.assumptions = assumptions
         self.contraries = contraries
         self.random_variables = random_variables
+        self.BN = BN
 
         self.validate()
 
@@ -22,6 +23,7 @@ class BABA:
     def validate(self):
         self.validate_language_covers_all_sentences()
         self.validate_is_flat()
+        self.validate_random_variables()
 
     # Checks whether all atoms defined in rules, assumptions,
     # contraries and random variables are included in the language
@@ -30,7 +32,7 @@ class BABA:
         for rule in self.rules:
             if rule.head not in self.language:
                 raise InvalidBABAException(exception_message)
-            for element in rule.body:
+            for element in rule.body: #TODO: checking rule body elements
                 if element not in self.language:
                     raise InvalidBABAException(exception_message)
 
@@ -42,8 +44,8 @@ class BABA:
             if assumption not in self.language or contrary.contrary not in self.language:
                 raise InvalidBABAException(exception_message)
 
-        for random_variable in self.random_variables:
-            if random_variable.sentence not in self.language:
+        for random_variable in self.random_variables: #TODO: rvs - separate object or not?
+            if random_variable not in self.language:
                 raise InvalidBABAException(exception_message)
 
     # Checks if underlying ABA network is flat
@@ -52,10 +54,18 @@ class BABA:
             if rule.head in self.assumptions:
                 raise InvalidBABAException("Framework is not flat")
 
+    # Ensures no random variables as heads of rules
+    def validate_random_variables(self):
+        for rule in self.rules:
+            if rule.head in self.random_variables:
+                raise InvalidBABAException("Random variables cannot be in the heads of rules")
+
 
 class Sentence:
-    def __init__(self, symbol):
+    def __init__(self, symbol, random_variable=False, negation=False):
         self.symbol = symbol
+        self.random_variable = random_variable
+        self.negation = negation
 
     def __hash__(self):
         return hash(self.symbol)
@@ -64,7 +74,7 @@ class Sentence:
         return self.symbol == other.symbol
 
     def __str__(self):
-        return self.symbol
+        return self.symbol if not self.negation else "~" + self.symbol
 
 
 class Rule:
@@ -103,23 +113,20 @@ class Contrary:
         return "~" + str(self.assumption) + " = " + str(self.contrary)
 
 
-class RandomVariable:
-    def __init__(self, sentence, probability=1.0):
-        if probability > 1.0 or probability < 0:
-            raise InvalidRandomVariableException(
-                "Probability of Random Variable must be within range 0 <= p <= 1")
-
-        self.sentence = sentence
-        self.probability = probability
-
-    def __hash__(self):
-        return hash(self.sentence) + hash(self.probability)
-
-    def __eq__(self, other):
-        return self.sentence == other.sentence and self.probability == other.probability
-
-    def __str__(self):
-        return "(" + str(self.sentence) + ", " + str(self.probability) + ")"
+# class RandomVariable:
+#     def __init__(self, sentence, negation=False):
+#
+#         self.sentence = sentence
+#         self.negation = negation
+#
+#     def __hash__(self):
+#         return hash(self.sentence) + hash(self.negation)
+#
+#     def __eq__(self, other):
+#         return self.sentence == other.sentence and self.negation == other.negation
+#
+#     def __str__(self):
+#         return "(" + str(self.sentence) + ", Negation = " + str(self.negation) + ")"
 
 
 # A set of sentences, 'support', derives the contrary of the 'attacked' sentence
@@ -163,11 +170,6 @@ class InvalidContraryException(Exception):
         self.message = message
 
 
-class InvalidRandomVariableException(Exception):
-    def __init__(self, message):
-        self.message = message
-
-
 # Returns whether a claim is derivable in a BABA framework from a set of sentences
 def derivable(baba, claim, sentences):
     if claim in sentences:
@@ -187,7 +189,7 @@ def derivable_set(baba, sentences):
     return sentences
 
 
-# Returns a list of lists of sentences required to derive a claim
+# Returns a list of lists of assumptions required to derive a claim
 def required_to_derive(baba, claim):
     if claim in baba.assumptions:
         return [[claim]]
