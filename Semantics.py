@@ -16,6 +16,7 @@ class BABA:
         self.contraries = contraries
         self.random_variables = random_variables
         self.BN = BN
+        self.rv_world = []
 
         self.validate()
 
@@ -68,10 +69,11 @@ class Sentence:
         self.negation = negation
 
     def __hash__(self):
-        return hash(self.symbol)
+        return hash(self.symbol) + hash(self.random_variable) + hash(self.negation)
 
     def __eq__(self, other):
-        return self.symbol == other.symbol
+        return self.symbol == other.symbol and self.random_variable == other.random_variable\
+           and self.negation == other.negation
 
     def __str__(self):
         return self.symbol if not self.negation else "~" + self.symbol
@@ -189,12 +191,12 @@ def derivable_set(baba, sentences):
     return sentences
 
 
-# Returns a list of lists of assumptions required to derive a claim
+# Returns a list of lists of sentences required to derive a claim
 def required_to_derive(baba, claim):
-    if claim in baba.assumptions:
+    if claim in baba.assumptions or claim in baba.rv_world:
         return [[claim]]
 
-    required = []
+    required = []  # TODO: deriving a body-less rule
     for rule in baba.rules:
         required_to_derive_claim = []
         if rule.head == claim:
@@ -267,7 +269,7 @@ def admissible(baba, assumptions):
 
 # Generates the complete set of admissible sets of assumptions
 def generate_admissible(baba):
-    return set([SemanticSet(elem) for elem in Utils.powerset(baba.assumptions) if admissible(baba, elem)])
+    return set([SemanticSet(elem) for elem in Utils.powerset(baba.assumptions + baba.rv_world) if admissible(baba, elem)])
 
 
 ############################################################
@@ -329,6 +331,36 @@ def stable(baba, admissibles=None):
             stable_sets.append(admissible_set)
 
     return stable_sets
+
+############################################################
+# Definitions of BABA semantics: acceptance probability
+# of a set of sentences (w.r.t. to a given semantics)
+
+
+def grounded_probability(baba, sentences):
+    worlds = Utils.generate_worlds(baba.random_variables)
+    acceptability_probability = 0
+
+    for world in worlds:
+        baba.rv_world = world
+        sets = grounded(baba)
+        world_probability = baba.BN.p_world(world)
+
+        if any([all([s in a_set.elements for s in sentences]) for a_set in sets]):
+            acceptability_probability += world_probability
+
+    return acceptability_probability
+
+
+def sceptically_preferred_probability(baba, sentences):
+    return 0
+
+
+def ideal_probability(baba, sentences):
+    return 0
+
+
+
 
 
 ############################################################

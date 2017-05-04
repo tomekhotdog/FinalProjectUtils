@@ -11,6 +11,7 @@ f = Semantics.Sentence('f')
 g = Semantics.Sentence('g')
 h = Semantics.Sentence('h')
 i = Semantics.Sentence('i')
+j = Semantics.Sentence('j')
 
 larger_baba = ExampleFrameworks.larger_framework()
 venice_baba = ExampleFrameworks.venice_framework()
@@ -294,6 +295,8 @@ class TestSemantics(unittest.TestCase):
         self.assertIn([e, f], required_to_derive_a)
         self.assertEqual(2, len(required_to_derive_a))
 
+        self.assertEqual(0, len(Semantics.required_to_derive(baba, j)))
+
         required_to_derive_c = Semantics.required_to_derive(baba, c)
         self.assertEqual(2, len(required_to_derive_c))
         first_derivation = required_to_derive_c[0]
@@ -445,6 +448,56 @@ class TestSemantics(unittest.TestCase):
         self.assertIn(Semantics.SemanticSet([f]), sceptically_preferred_sets)
         self.assertEqual(1, len(sceptically_preferred_sets))
 
+#############################################################
+# BABA semantics testing (with random variables)
+
     def test_valid_cow_framework_formulation(self):
-        baba = ExampleFrameworks.cow_framework()
-        baba.validate()
+        ExampleFrameworks.cow_framework()
+        ExampleFrameworks.conditional_cow_framework()
+
+    def test_r_grounded_semantics(self):
+        baba = ExampleFrameworks.r_framework()
+        grounded = Semantics.grounded(baba)
+        self.assertEqual(1, len(grounded))
+
+        grounded_set = grounded.pop()
+        self.assertEqual(3, len(grounded_set.elements))
+        self.assertTrue(all([elem in grounded_set.elements for elem in [a, b, c]]))
+
+    def test_r_grounded_semantics_with_random_variable_world(self):
+        baba = ExampleFrameworks.r_framework()
+        baba.rv_world = [Semantics.Sentence('s', random_variable=True)]
+        grounded = Semantics.grounded(baba)
+        self.assertEqual(1, len(grounded))
+
+        grounded_set = grounded.pop()
+        self.assertEqual(2, len(grounded_set.elements))
+        self.assertTrue(all([elem in grounded_set.elements for elem in [b, c]]))
+
+    def test_r_grounded_semantics_with_multiple_random_variables(self):
+        baba = ExampleFrameworks.r_framework()
+        baba.rv_world = [Semantics.Sentence('s', random_variable=True),
+                         Semantics.Sentence('t', random_variable=True)]
+        grounded = Semantics.grounded(baba)
+        self.assertEqual(1, len(grounded))
+
+        grounded_set = grounded.pop()
+        self.assertEqual(2, len(grounded_set.elements))
+        self.assertTrue(all([elem in grounded_set.elements for elem in [a, c]]))
+
+    def test_r_grounded_semantics_with_negated_random_variable(self):
+        baba = ExampleFrameworks.r_framework()
+        baba.rv_world = [Semantics.Sentence('s', random_variable=True, negation=True),
+                         Semantics.Sentence('t', random_variable=True, negation=False)]
+        grounded = Semantics.grounded(baba)
+        self.assertEqual(1, len(grounded))
+
+        grounded_set = grounded.pop()
+        self.assertEqual(2, len(grounded_set.elements))
+        self.assertTrue(all([elem in grounded_set.elements for elem in [a, c]]))
+
+    def test_grounded_probability(self):
+        baba = ExampleFrameworks.r_framework()
+        self.assertEqual(0.36, Semantics.grounded_probability(baba, [a]))
+        self.assertEqual(0.4, Semantics.grounded_probability(baba, [b]))
+        self.assertEqual(1.0, Semantics.grounded_probability(baba, [c]))

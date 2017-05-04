@@ -94,3 +94,20 @@ class TestSemantics(unittest.TestCase):
         self.assertNotIn(set_d, minimal_sets)
         self.assertNotIn(set_e, minimal_sets)
         self.assertNotIn(set_f, minimal_sets)
+
+    def test_generate_worlds(self):
+        a = Semantics.Sentence('a', random_variable=True)
+        a_neg = Semantics.Sentence('a', random_variable=True, negation=True)
+        b = Semantics.Sentence('b', random_variable=True)
+        b_neg = Semantics.Sentence('b', random_variable=True, negation=True)
+        c = Semantics.Sentence('c', random_variable=True)
+
+        four_worlds = Utils.generate_worlds([a, b])
+        self.assertEqual(4, len(four_worlds))
+        for world in four_worlds:
+            self.assertEqual(2, len(world))
+            self.assertFalse(a in world and a_neg in world)
+            self.assertFalse(b in world and b_neg in world)
+
+        eight_worlds = Utils.generate_worlds([a, b, c])
+        self.assertEqual(8, len(eight_worlds))

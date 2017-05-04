@@ -10,6 +10,10 @@ f = Semantics.Sentence('f')
 g = Semantics.Sentence('g')
 h = Semantics.Sentence('h')
 i = Semantics.Sentence('i')
+j = Semantics.Sentence('j')
+
+s = Semantics.Sentence('s', random_variable=True)
+t = Semantics.Sentence('t', random_variable=True)
 
 _a = Semantics.Sentence('_a')
 _b = Semantics.Sentence('_b')
@@ -63,10 +67,10 @@ def with_contraries():
 
 
 def larger_framework():
-    language = [a, b, c, d, e, f, g, h, i]
+    language = [a, b, c, d, e, f, g, h, i, j]
     rules = [Semantics.Rule(a, [b]), Semantics.Rule(a, [e, f]),
              Semantics.Rule(c, [d, e, f]), Semantics.Rule(d, [g,  h]),
-             Semantics.Rule(d, [i])]
+             Semantics.Rule(d, [i]), Semantics.Rule(j, [])]
     assumptions = [b, e, f, g, h, i]
     contraries = {b: Semantics.Contrary(b, c)}
     return Semantics.BABA(language, rules, assumptions, contraries, [], None)
@@ -125,9 +129,10 @@ def cow_framework():
     language = [HP, not_HP, HOC, not_HOC, CCA, not_CCA, FM, not_FM, JN, not_JN, JF, CM]
     rules = [Semantics.Rule(HP, [HOC, CCA, not_FM]), Semantics.Rule(HOC, []),
              Semantics.Rule(FM, [CM]), Semantics.Rule(CCA, [not_JN]), Semantics.Rule(JN, [JF])]
-    assumptions = [not_HP, not_HOC, not_CCA, not_FM]
+    assumptions = [not_HP, not_HOC, not_CCA, not_FM, not_JN]
     contraries = {not_HP: Semantics.Contrary(not_HP, HP), not_HOC: Semantics.Contrary(not_HOC, HOC),
-                  not_CCA: Semantics.Contrary(not_CCA, CCA), not_FM: Semantics.Contrary(not_FM, FM)}
+                  not_CCA: Semantics.Contrary(not_CCA, CCA), not_FM: Semantics.Contrary(not_FM, FM),
+                  not_JN: Semantics.Contrary(not_JN, JN)}
     random_variables = [JF, CM]
     BN = Bayesian.BayesianNetwork({CM.symbol: 0.1, JF.symbol: 0.8})
     return Semantics.BABA(language, rules, assumptions, contraries, random_variables, BN)
@@ -148,7 +153,26 @@ def conditional_cow_framework():
                   not_CCA: Semantics.Contrary(not_CCA, CCA), not_FM: Semantics.Contrary(not_FM, FM)}
     random_variables = [JN, JF, CM]
     BN = Bayesian.BayesianNetwork({JN.symbol: 0.5, JF.symbol: 0.25, CM.symbol: 0.1})
-    return Semantics.BABA(language, rules, assumptions, contraries, random_variables, None)
+    return Semantics.BABA(language, rules, assumptions, contraries, random_variables, BN)
+
+########################################################################################
+
+
+########################################################################################
+# BABA framework with random variables as body of rules
+# Visual representation:
+#
+#    a   <-- {b, s} <-- {c, t}
+#
+def r_framework():
+    language = [a, _a, b, _b, c, _c, t, s]
+    rules = [Semantics.Rule(_a, [b, s]), Semantics.Rule(_b, [c, t])]
+    assumptions = [a, b, c]
+    contraries = {a: Semantics.Contrary(a, _a), b: Semantics.Contrary(b, _b),
+                  c: Semantics.Contrary(c, _c)}
+    random_variables = [s, t]
+    bayes_net = Bayesian.BayesianNetwork({s.symbol: 0.6, t.symbol: 0.4})
+    return Semantics.BABA(language, rules, assumptions, contraries, random_variables, bayes_net)
 
 ########################################################################################
 

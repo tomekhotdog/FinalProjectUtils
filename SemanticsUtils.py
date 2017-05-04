@@ -1,4 +1,5 @@
 import itertools
+import collections
 import Semantics
 
 
@@ -44,3 +45,27 @@ def minimal_set(semantic_sets):
                 minimal_sets.append(semantic_set)
 
     return minimal_sets
+
+
+# Returns all the possible worlds created with the given random variables
+def generate_worlds(random_variables):
+    worlds = []
+
+    for rv in random_variables:
+        pos = Semantics.Sentence(rv.symbol, random_variable=True)
+        neg = Semantics.Sentence(rv.symbol, random_variable=True, negation=True)\
+
+        possible_world = [pos, neg]
+        if len(worlds) == 0:
+            worlds = possible_world
+            continue
+
+        worlds = list(itertools.product(worlds, possible_world))
+        worlds = [flatten(list(world)) for world in worlds]
+
+    return worlds
+
+
+def flatten(items):
+    return [elem for item in items for elem in flatten(item)] \
+        if isinstance(items, collections.Iterable) else [items]
