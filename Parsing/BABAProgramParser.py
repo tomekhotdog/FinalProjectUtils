@@ -1,4 +1,5 @@
 import Semantics
+import Bayesian
 import re
 
 FILENAME = 'filename'
@@ -27,6 +28,7 @@ class BABAProgramParser:
         self.rules = []
         self.contraries = {}
         self.random_variables = []
+        self.bayesian_network = {}
 
     def parse(self):
         if self.STRING:
@@ -58,15 +60,26 @@ class BABAProgramParser:
                 self.language.append(contrary.contrary)
 
             elif matches_random_variable_declaration(line):
-                rv = extract_random_variable(line)
+                rv, probability = extract_random_variable(line)
                 self.random_variables.append(rv)
-                self.language.append(rv.sentence)
+                self.language.append(rv)
+                self.bayesian_network[rv.symbol] = probability
 
         for rule in rules:
-            extracted_rule = extract_rule(rule)
+            extracted_rule = extract_rule(rule, self.random_variables)
+            rule_elements = extracted_rule.body + [extracted_rule.head]
+            for sentence in rule_elements:
+                if sentence not in self.language:
+                    self.language.append(sentence)
+
             self.rules.append(extracted_rule)
 
-        return Semantics.BABA(self.language, self.rules, self.assumptions, self.contraries, self.random_variables)
+        return Semantics.BABA(self.language,
+                              self.rules,
+                              self.assumptions,
+                              self.contraries,
+                              self.random_variables,
+                              Bayesian.BayesianNetwork(self.bayesian_network))
 
 
 class ProgramParseException(Exception):
@@ -115,13 +128,20 @@ def extract_assumption(assumption):
     return Semantics.Sentence(extract_from_parentheses(assumption))
 
 
-def extract_rule(rule):
+def extract_rule(rule, random_variables):
     if not matches_rule_declaration(rule):
         raise ProgramParseException("Provided rule does not match required format")
 
     extracted = extract_from_parentheses(rule).split(',', 1)
     head = Semantics.Sentence(extracted[0].strip())
-    body = [Semantics.Sentence(elem.strip()) for elem in extract_from_square_brackets(extracted[1].strip()).split(',')]
+    body = []
+    for elem in extract_from_square_brackets(extracted[1].strip()).split(','):
+        rv = Semantics.Sentence(elem.strip(), random_variable=True)
+        if rv in random_variables:
+            body.append(rv)
+        else:
+            body.append(Semantics.Sentence(elem.strip()))
+
     return Semantics.Rule(head, body)
 
 
@@ -140,9 +160,9 @@ def extract_random_variable(random_variable):
         raise ProgramParseException("Provided random variable does not match required format")
 
     extracted = extract_from_parentheses(random_variable).split(',')
-    rv = Semantics.Sentence(extracted[0].strip())
+    rv = Semantics.Sentence(extracted[0].strip(), random_variable=True)
     probability = float(extracted[1].strip())
-    return Semantics.RandomVariable(rv, probability)
+    return rv, probability
 
 
 # Utility method that extracts the string from input of format: [\w]*\(<element>\)[\w]*

@@ -1,6 +1,7 @@
 import unittest
 from Parsing import BABAProgramParser as Parser
 import Semantics
+import ExampleFrameworks
 
 program_1_string = "myAsm(a).\nmyAsm(b).\nmyAsm(c).\nmyAsm(d).\nmyAsm(e).\n" \
          "contrary(a, _a).\ncontrary(b, _b).\ncontrary(c, _c).\ncontrary(d, _d)." \
@@ -82,10 +83,10 @@ class TestBABAProgramParser(unittest.TestCase):
         self.assertEqual(Parser.extract_assumption('myAsm(abcde).'), Semantics.Sentence('abcde'))
 
     def test_extract_rule(self):
-        self.assertEqual(Parser.extract_rule('myRule(a, [b,c]).'), Semantics.Rule(a, [b, c]))
-        self.assertEqual(Parser.extract_rule('myRule(a,[b , c,    d]).'), Semantics.Rule(a, [b, c, d]))
-        self.assertEqual(Parser.extract_rule('myRule(abc, [ab, bc, bd]).'), Semantics.Rule(abc, [ab, bc, bd]))
-        self.assertEqual(Parser.extract_rule('myRule(t, [a, b, c]).'), Semantics.Rule(t, [a, b, c]))
+        self.assertEqual(Parser.extract_rule('myRule(a, [b,c]).', []), Semantics.Rule(a, [b, c]))
+        self.assertEqual(Parser.extract_rule('myRule(a,[b , c,    d]).', []), Semantics.Rule(a, [b, c, d]))
+        self.assertEqual(Parser.extract_rule('myRule(abc, [ab, bc, bd]).', []), Semantics.Rule(abc, [ab, bc, bd]))
+        self.assertEqual(Parser.extract_rule('myRule(t, [a, b, c]).', []), Semantics.Rule(t, [a, b, c]))
 
     def test_extract_contrary(self):
         self.assertEqual(Parser.extract_contrary('contrary(a, _a).'), Semantics.Contrary(a, _a))
@@ -94,10 +95,14 @@ class TestBABAProgramParser(unittest.TestCase):
         self.assertEqual(Parser.extract_contrary('contrary(a    ,    _a).'), Semantics.Contrary(a, _a))
 
     def test_extract_random_variable(self):
-        self.assertEqual(Parser.extract_random_variable('myRV(a, 0.5).'), Semantics.RandomVariable(a, 0.5))
-        self.assertEqual(Parser.extract_random_variable('myRV(abc, 0.00001).'), Semantics.RandomVariable(abc, 0.00001))
-        self.assertEqual(Parser.extract_random_variable('myRV(t, 1).'), Semantics.RandomVariable(t, 1))
-        self.assertEqual(Parser.extract_random_variable('myRV(a,0.1).'), Semantics.RandomVariable(a, 0.1))
+        self.assertEqual((Semantics.Sentence('a', random_variable=True), 0.5),
+                         Parser.extract_random_variable('myRV(a, 0.5).'))
+        self.assertEqual((Semantics.Sentence('abc', random_variable=True), 0.00001),
+                         Parser.extract_random_variable('myRV(abc, 0.00001).'))
+        self.assertEqual((Semantics.Sentence('t', random_variable=True), 1),
+                         Parser.extract_random_variable('myRV(t, 1).'))
+        self.assertEqual((Semantics.Sentence('a', random_variable=True), 0.1),
+                         Parser.extract_random_variable('myRV(a,0.1).'))
 
     def test_extract_from_parentheses(self):
         self.assertEqual(Parser.extract_from_parentheses('myAsm(abcde).'), 'abcde')
@@ -121,7 +126,7 @@ class TestBABAProgramParser(unittest.TestCase):
         self.assertEqual(5, len(baba.assumptions))
         self.assertTrue(all([elem in baba.contraries for elem in [a, b, c, d, e]]))
         self.assertEqual(5, len(baba.contraries))
-        self.assertIn(Semantics.RandomVariable(t, 0.5), baba.random_variables)
+        self.assertIn(Semantics.Sentence('t', random_variable=True), baba.random_variables)
         self.assertEqual(1, len(baba.random_variables))
         self.assertEqual(5, len(baba.rules))
 
@@ -134,7 +139,7 @@ class TestBABAProgramParser(unittest.TestCase):
         self.assertEqual(5, len(baba.assumptions))
         self.assertTrue(all([elem in baba.contraries for elem in [a, b, c, d, e]]))
         self.assertEqual(5, len(baba.contraries))
-        self.assertIn(Semantics.RandomVariable(t, 0.5), baba.random_variables)
+        self.assertIn(Semantics.Sentence('t', random_variable=True), baba.random_variables)
         self.assertEqual(1, len(baba.random_variables))
         self.assertEqual(5, len(baba.rules))
 
@@ -151,3 +156,12 @@ class TestBABAProgramParser(unittest.TestCase):
         baba = parser.parse()
         complete_sets = Semantics.complete(baba)
         self.assertEqual(6, len(complete_sets))
+
+    def test_integration_framework_with_random_variables(self):
+        parser = Parser.BABAProgramParser(filename='BABA_program_3')
+        baba = parser.parse()
+        self.assertEqual(0.64, Semantics.semantic_probability(Semantics.GROUNDED, baba, [ExampleFrameworks.j]))
+        self.assertEqual(0.64, Semantics.semantic_probability(Semantics.GROUNDED, baba, [a]))
+        self.assertEqual(0.64, Semantics.semantic_probability(Semantics.GROUNDED, baba, [a, ExampleFrameworks.j]))
+        self.assertEqual(0.6, Semantics.semantic_probability(Semantics.GROUNDED, baba, [b]))
+        self.assertEqual(1.0, Semantics.semantic_probability(Semantics.GROUNDED, baba, [c]))

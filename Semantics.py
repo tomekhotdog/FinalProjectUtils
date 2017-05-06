@@ -252,7 +252,6 @@ def defends(baba, assumptions, claim):
             continue
 
         support_contraries = contraries(baba, attack.support)
-
         if len(attack.support) == 0:  # Attack cannot be countered
             is_counter_attacked = False
         elif len(support_contraries) == 0:  # Attack support has no contrary

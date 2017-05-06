@@ -51,3 +51,61 @@ class TestBayesianNetwork(unittest.TestCase):
         self.assertAlmostEqual(0.12, bn.p_world([a_neg, b, c]))
         self.assertAlmostEqual(0.03, bn.p_world([a, b_neg, c]))
         self.assertAlmostEqual(0.07, bn.p_world([a, b_neg, c_neg]))
+
+    def test_conditional_probability_sum(self):
+        cp_map = {"bc": 0.4, "b~c": 0.3, "~bc": 0.2, "~b~c": 0.1}
+        cp = Bayesian.ConditionalProbability(a, [b, c], cp_map)
+        self.assertAlmostEqual(1.0, cp.sum())
+
+    def test_conditional_probability_key_generation(self):
+        cp_map = {"bc": 0.4, "b~c": 0.3, "~bc": 0.2, "~b~c": 0.1}
+        cp = Bayesian.ConditionalProbability(a, [b, c], cp_map)
+        self.assertEqual("bc", cp.conditional_probability_key([c, b]))
+        self.assertEqual("b~c", cp.conditional_probability_key([c_neg, b]))
+        self.assertEqual("~bc", cp.conditional_probability_key([b_neg, c]))
+        self.assertEqual("~b~c", cp.conditional_probability_key([b_neg, c_neg]))
+
+    def test_conditional_probability_request(self):
+        cp_map = {"bc": 0.4, "b~c": 0.3, "~bc": 0.2, "~b~c": 0.1}
+        cp = Bayesian.ConditionalProbability(a, [b, c], cp_map)
+        self.assertEqual(0.4, cp.p([b, c]))
+        self.assertEqual(0.3, cp.p([b, c_neg]))
+        self.assertEqual(0.2, cp.p([b_neg, c]))
+        self.assertEqual(0.1, cp.p([b_neg, c_neg]))
+
+    def test_invalid_conditional_probability_request(self):
+        cp_map = {"bc": 0.4, "b~c": 0.3, "~bc": 0.2, "~b~c": 0.1}
+        cp = Bayesian.ConditionalProbability(a, [b, c], cp_map)
+
+        def invalid_request():
+            return cp.p([b])
+
+        self.assertRaises(Bayesian.InvalidConditionalProbabilityException, invalid_request)
+
+    #  TODO: define validate() tests
+    # def test_validate_conditional_probability(self):
+    #     cp_map = {"bc": 0.4, "b~c": 0.3, "~bc": 0.2, "~b~c": 0.1}
+    #     cp = Bayesian.ConditionalProbability(a, [b, c], cp_map)
+    #     cp.validate()
+
+    # def test_validate_invalid_conditional_probability(self):
+    #     def invalid_cp():
+    #         cp_map = {"bc": 0.5, "b~c": 0.3, "~bc": 0.2, "~b~c": 0.1}
+    #         cp = Bayesian.ConditionalProbability(a, [b, c], cp_map)
+    #         cp.validate()
+    #
+    #     self.assertRaises(Bayesian.InvalidConditionalProbabilityException, invalid_cp)
+
+    def test_bayesian_network_with_conditional_probabilities(self):
+        cp_map = {"bc": 0.3, "b~c": 0.6, "~bc": 0.5, "~b~c": 0.4}
+        cp = Bayesian.ConditionalProbability(a, [b, c], cp_map)
+        baysnet = Bayesian.BayesianNetwork({'a': cp, 'b': 0.7, 'c': 0.2})
+        self.assertAlmostEqual(0.7, baysnet.p(b))
+        self.assertAlmostEqual(0.2, baysnet.p(c))
+        self.assertAlmostEqual(0.6, baysnet.p(a, [c_neg, b]))
+        self.assertAlmostEqual(0.4, baysnet.p(a, [b_neg, c_neg]))
+        self.assertAlmostEqual(0.6, baysnet.p(a_neg, [b_neg, c_neg]))
+        self.assertAlmostEqual(0.336, baysnet.p_world([a, b, c_neg]))
+        self.assertAlmostEqual(0.096, baysnet.p_world([a, b_neg, c_neg]))
+        self.assertAlmostEqual(0.098, baysnet.p_world([a_neg, b, c]))
+        self.assertAlmostEqual(0.144, baysnet.p_world([a_neg, b_neg, c_neg]))

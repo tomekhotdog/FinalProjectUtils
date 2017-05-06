@@ -1,0 +1,11 @@
+myAsm(a).
+myAsm(b).
+myAsm(c).
+myRule(j, [a]).
+myRule(_a, [b, s]).
+myRule(_b, [c, t]).
+contrary(a, _a).
+contrary(b, _b).
+contrary(c, _c).
+myRV(s, 0.6).
+myRV(t, 0.4).
