@@ -57,24 +57,6 @@ class TestSemantics(unittest.TestCase):
         self.assertEqual(True, rv.random_variable)
         self.assertEqual(True, rv.negation)
 
-    # def test_random_variable_valid_probability(self):
-    #     def invalid_negative_random_variable():
-    #         Semantics.RandomVariable('a', -0.3)
-    #
-    #     def invalid_greater_than_one_random_variable():
-    #         Semantics.RandomVariable('a', 1.0001)
-    #
-    #     def valid_zero_random_variable():
-    #         Semantics.RandomVariable('a', 0)
-    #
-    #     def valid_one_random_variable():
-    #         Semantics.RandomVariable('a', 1.0)
-    #
-    #     self.assertRaises(Semantics.InvalidRandomVariableException, invalid_negative_random_variable)
-    #     self.assertRaises(Semantics.InvalidRandomVariableException, invalid_greater_than_one_random_variable)
-    #     valid_zero_random_variable()
-    #     valid_one_random_variable()
-
     def test_BABA_language_covers_all_sentences(self):
         ExampleFrameworks.valid_BABA_framework()
         self.assertRaises(Semantics.InvalidBABAException, ExampleFrameworks.invalid_BABA_framework)
@@ -112,6 +94,19 @@ class TestSemantics(unittest.TestCase):
         self.assertFalse(Semantics.derivable(baba, a, [b, d]))
         self.assertFalse(Semantics.derivable(baba, a, [b, f, g]))
 
+    def test_derivable_with_random_variables(self):
+        baba = ExampleFrameworks.r_framework()
+        self.assertTrue(Semantics.derivable(baba, a, [a, b]))
+        self.assertFalse(Semantics.derivable(baba, a, []))
+        self.assertFalse(Semantics.derivable(baba, ExampleFrameworks._c, []))
+
+    def test_derivable_with_empty_body_rules(self):
+        baba = ExampleFrameworks.cow_framework()
+        self.assertTrue(Semantics.derivable(baba, ExampleFrameworks.HOC, []))
+        self.assertFalse(Semantics.derivable(baba, ExampleFrameworks.not_HOC, []))
+        self.assertTrue(Semantics.derivable(baba, ExampleFrameworks.not_FM, [ExampleFrameworks.not_FM]))
+        self.assertFalse(Semantics.derivable(baba, ExampleFrameworks.FM, [ExampleFrameworks.not_FM]))
+
     def test_derivable_set(self):
         baba = ExampleFrameworks.with_chaining()
         self.assertTrue(all([element in Semantics.derivable_set(baba, [b, c]) for element in [a, b, c, g]]))
@@ -137,6 +132,11 @@ class TestSemantics(unittest.TestCase):
         self.assertFalse(Semantics.defends(s_baba, [a, b], e))
         self.assertFalse(Semantics.defends(s_baba, [d, e, f], c))
         self.assertFalse(Semantics.defends(s_baba, [c, d, e, f], a))
+
+    def test_defends_with_empty_body_rules(self):
+        baba = ExampleFrameworks.cow_framework()
+        self.assertFalse(Semantics.defends(baba, [], ExampleFrameworks.not_HOC))
+        self.assertTrue(Semantics.defends(baba, [], ExampleFrameworks.not_FM))
 
     def test_conflict_free_trivially(self):
         baba = ExampleFrameworks.valid_BABA_framework()
@@ -452,8 +452,12 @@ class TestSemantics(unittest.TestCase):
 # BABA semantics testing (with random variables)
 
     def test_valid_cow_framework_formulation(self):
-        ExampleFrameworks.cow_framework()
+        baba = ExampleFrameworks.cow_framework()
+        self.assertAlmostEqual(0.18, Semantics.semantic_probability(Semantics.GROUNDED, baba, [ExampleFrameworks.HP]))
+
         ExampleFrameworks.conditional_cow_framework()
+        self.assertAlmostEqual(0.72, Semantics.semantic_probability(Semantics.GROUNDED, baba, [ExampleFrameworks.HP]))
+        # TODO: conditional probability support
 
     def test_r_grounded_semantics(self):
         baba = ExampleFrameworks.r_framework()
@@ -498,6 +502,19 @@ class TestSemantics(unittest.TestCase):
 
     def test_grounded_probability(self):
         baba = ExampleFrameworks.r_framework()
-        self.assertEqual(0.36, Semantics.grounded_probability(baba, [a]))
-        self.assertEqual(0.4, Semantics.grounded_probability(baba, [b]))
-        self.assertEqual(1.0, Semantics.grounded_probability(baba, [c]))
+        self.assertEqual(0.64, Semantics.semantic_probability(Semantics.GROUNDED, baba, [j]))
+        self.assertEqual(0.64, Semantics.semantic_probability(Semantics.GROUNDED, baba, [a]))
+        self.assertEqual(0.64, Semantics.semantic_probability(Semantics.GROUNDED, baba, [a, j]))
+        self.assertEqual(0.6, Semantics.semantic_probability(Semantics.GROUNDED, baba, [b]))
+        self.assertEqual(1.0, Semantics.semantic_probability(Semantics.GROUNDED, baba, [c]))
+
+    def test_invalid_semantic_probability(self):
+        baba = ExampleFrameworks.r_framework()
+
+        def invalid_semantics():
+            return Semantics.semantic_probability(-1, baba, [a])
+        self.assertRaises(Semantics.InvalidSemanticsException, invalid_semantics)
+
+        def invalid_sentences():
+            return Semantics.semantic_probability(Semantics.GROUNDED, baba, [f])
+        self.assertRaises(Semantics.InvalidBABAException, invalid_sentences)

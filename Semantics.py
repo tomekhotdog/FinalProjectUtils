@@ -1,6 +1,11 @@
 import SemanticsUtils as Utils
 
 
+GROUNDED = 1
+SCEPTICALLY_PREFERRED = 2
+IDEAL = 3
+
+
 # Bayesian Assumption-Based Argumentation
 class BABA:
     # BABA = (F^A, BN, RV) where F^A = ABA framework: (L, R, A, _) (Language, Rules, Assumptions, Contraries),
@@ -26,6 +31,10 @@ class BABA:
         self.validate_is_flat()
         self.validate_random_variables()
 
+    # Sets the world of random variables for semantics calculations
+    def set_random_variable_world(self, random_variable_world):
+        self.rv_world = random_variable_world
+
     # Checks whether all atoms defined in rules, assumptions,
     # contraries and random variables are included in the language
     def validate_language_covers_all_sentences(self):
@@ -33,7 +42,7 @@ class BABA:
         for rule in self.rules:
             if rule.head not in self.language:
                 raise InvalidBABAException(exception_message)
-            for element in rule.body: #TODO: checking rule body elements
+            for element in rule.body:
                 if element not in self.language:
                     raise InvalidBABAException(exception_message)
 
@@ -45,7 +54,7 @@ class BABA:
             if assumption not in self.language or contrary.contrary not in self.language:
                 raise InvalidBABAException(exception_message)
 
-        for random_variable in self.random_variables: #TODO: rvs - separate object or not?
+        for random_variable in self.random_variables:
             if random_variable not in self.language:
                 raise InvalidBABAException(exception_message)
 
@@ -115,22 +124,6 @@ class Contrary:
         return "~" + str(self.assumption) + " = " + str(self.contrary)
 
 
-# class RandomVariable:
-#     def __init__(self, sentence, negation=False):
-#
-#         self.sentence = sentence
-#         self.negation = negation
-#
-#     def __hash__(self):
-#         return hash(self.sentence) + hash(self.negation)
-#
-#     def __eq__(self, other):
-#         return self.sentence == other.sentence and self.negation == other.negation
-#
-#     def __str__(self):
-#         return "(" + str(self.sentence) + ", Negation = " + str(self.negation) + ")"
-
-
 # A set of sentences, 'support', derives the contrary of the 'attacked' sentence
 class Attack:
     def __init__(self, attacked, support):
@@ -172,9 +165,14 @@ class InvalidContraryException(Exception):
         self.message = message
 
 
+class InvalidSemanticsException(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
 # Returns whether a claim is derivable in a BABA framework from a set of sentences
 def derivable(baba, claim, sentences):
-    if claim in sentences:
+    if claim in sentences or claim in baba.rv_world:
         return True
     for rule in baba.rules:
         if claim == rule.head:
@@ -193,10 +191,10 @@ def derivable_set(baba, sentences):
 
 # Returns a list of lists of sentences required to derive a claim
 def required_to_derive(baba, claim):
-    if claim in baba.assumptions or claim in baba.rv_world:
+    if claim in baba.assumptions or claim in baba.random_variables:
         return [[claim]]
 
-    required = []  # TODO: deriving a body-less rule
+    required = []
     for rule in baba.rules:
         required_to_derive_claim = []
         if rule.head == claim:
@@ -220,7 +218,7 @@ def contraries(baba, sentences):
     return contrary_set
 
 
-# Returns a set of all Attack's against elements of attacked
+# Returns a set of all potential Attacks against elements of attacked
 def generate_attacks(baba, attacked):
     attack_set = set()
     for element in attacked:
@@ -228,10 +226,20 @@ def generate_attacks(baba, attacked):
             continue
 
         contrary = baba.contraries[element].contrary
-        for given_list in required_to_derive(baba, contrary):
-            attack_set.add(Attack(element, set(given_list)))
+        required_to_derive_contrary = required_to_derive(baba, contrary)
+        if len(required_to_derive_contrary) == 0:
+            if derivable(baba, contrary, []):
+                attack_set.add(Attack(element, set([])))
+        else:
+            for given_list in required_to_derive_contrary:
+                attack_set.add(Attack(element, set(given_list)))
 
     return attack_set
+
+
+# Returns whether the given attack holds in the given baba framework and random variable world
+def valid_attack(baba, attack):
+    return all([(elem in baba.assumptions or elem in baba.rv_world) for elem in attack.support])
 
 
 # Returns whether the set of assumptions defends the claim -
@@ -239,7 +247,19 @@ def generate_attacks(baba, attacked):
 def defends(baba, assumptions, claim):
     attacks = generate_attacks(baba, [claim])
     for attack in attacks:
-        is_counter_attacked = any([derivable(baba, a_contrary, assumptions) for a_contrary in contraries(baba, attack.support)])
+
+        if not valid_attack(baba, attack):
+            continue
+
+        support_contraries = contraries(baba, attack.support)
+
+        if len(attack.support) == 0:  # Attack cannot be countered
+            is_counter_attacked = False
+        elif len(support_contraries) == 0:  # Attack support has no contrary
+            is_counter_attacked = True
+        else:
+            is_counter_attacked = any([derivable(baba, elem, assumptions + baba.rv_world) for elem in support_contraries])
+
         if not is_counter_attacked:
             return False
 
@@ -258,9 +278,11 @@ def admissible(baba, assumptions):
         return False
 
     for attack in generate_attacks(baba, assumptions):
-        support_contraries = contraries(baba, attack.support)
+        if not valid_attack(baba, attack):
+            continue
 
-        if not any(derivable(baba, s, assumptions) for s in support_contraries)\
+        support_contraries = contraries(baba, attack.support)
+        if not any(derivable(baba, s, (assumptions + baba.rv_world)) for s in support_contraries)\
                 and len(support_contraries) > 0:
             return False
 
@@ -269,7 +291,7 @@ def admissible(baba, assumptions):
 
 # Generates the complete set of admissible sets of assumptions
 def generate_admissible(baba):
-    return set([SemanticSet(elem) for elem in Utils.powerset(baba.assumptions + baba.rv_world) if admissible(baba, elem)])
+    return set([SemanticSet(elem) for elem in Utils.powerset(baba.assumptions) if admissible(baba, elem)])
 
 
 ############################################################
@@ -333,34 +355,38 @@ def stable(baba, admissibles=None):
     return stable_sets
 
 ############################################################
-# Definitions of BABA semantics: acceptance probability
+
+
+# Definition of BABA semantics: acceptance probability
 # of a set of sentences (w.r.t. to a given semantics)
+def semantic_probability(semantics, baba, sentences):
+    if not all([s in baba.language for s in sentences]):
+        raise InvalidBABAException("Semantic probability enquired for invalid set of sentences")
 
-
-def grounded_probability(baba, sentences):
     worlds = Utils.generate_worlds(baba.random_variables)
-    acceptability_probability = 0
+    acceptability_probability = 0.0
 
     for world in worlds:
-        baba.rv_world = world
-        sets = grounded(baba)
-        world_probability = baba.BN.p_world(world)
+        baba.set_random_variable_world(world)
 
-        if any([all([s in a_set.elements for s in sentences]) for a_set in sets]):
-            acceptability_probability += world_probability
+        if semantics == GROUNDED:
+            semantic_sets = grounded(baba)
+        elif semantics == SCEPTICALLY_PREFERRED:
+            semantic_sets = sceptically_preferred(baba)
+        elif semantics == IDEAL:
+            semantic_sets = ideal(baba)
+        else:
+            raise InvalidSemanticsException("Invalid semantics chosen: " + str(semantics))
+
+        can_derive_sentence = False
+
+        for a_set in semantic_sets:
+            can_derive_sentence = all([derivable(baba, s, a_set.elements + baba.rv_world) for s in sentences])
+
+        if can_derive_sentence:
+            acceptability_probability += baba.BN.p_world(world)
 
     return acceptability_probability
-
-
-def sceptically_preferred_probability(baba, sentences):
-    return 0
-
-
-def ideal_probability(baba, sentences):
-    return 0
-
-
-
 
 
 ############################################################

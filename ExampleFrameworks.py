@@ -165,8 +165,8 @@ def conditional_cow_framework():
 #    a   <-- {b, s} <-- {c, t}
 #
 def r_framework():
-    language = [a, _a, b, _b, c, _c, t, s]
-    rules = [Semantics.Rule(_a, [b, s]), Semantics.Rule(_b, [c, t])]
+    language = [a, _a, b, _b, c, _c, j, t, s]
+    rules = [Semantics.Rule(j, [a]), Semantics.Rule(_a, [b, s]), Semantics.Rule(_b, [c, t])]
     assumptions = [a, b, c]
     contraries = {a: Semantics.Contrary(a, _a), b: Semantics.Contrary(b, _b),
                   c: Semantics.Contrary(c, _c)}
