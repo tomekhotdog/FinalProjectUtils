@@ -46,6 +46,15 @@ class ConditionalProbability:
         self.conditional_variables = conditional_variables
         self.conditional_probabilities = conditional_probabilities  # dictionary: random variable key -> probability
 
+    # Equality defined by structure (variables present, not probabilities)
+    def __eq__(self, other):
+        match_sentence = self.sentence == other.sentence
+        match_variables = len(self.conditional_variables) == len(other.conditional_variables)
+        all([elem in self.conditional_variables for elem in other.conditional_variables])
+        match_probabilities = len(self.conditional_probabilities) == len(other.conditional_probabilities)
+
+        return match_sentence and match_variables and match_probabilities
+
     #  TODO: define validate()
 
     def sum(self):

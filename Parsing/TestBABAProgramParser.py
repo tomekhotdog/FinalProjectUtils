@@ -2,6 +2,7 @@ import unittest
 from Parsing import BABAProgramParser as Parser
 import Semantics
 import ExampleFrameworks
+import Bayesian
 
 program_1_string = "myAsm(a).\nmyAsm(b).\nmyAsm(c).\nmyAsm(d).\nmyAsm(e).\n" \
          "contrary(a, _a).\ncontrary(b, _b).\ncontrary(c, _c).\ncontrary(d, _d)." \
@@ -26,6 +27,9 @@ bc = Semantics.Sentence('bc')
 bd = Semantics.Sentence('bd')
 sentence = Semantics.Sentence('sentence')
 _sentence = Semantics.Sentence('_sentence')
+rv_a = Semantics.Sentence('a', random_variable=True)
+rv_b = Semantics.Sentence('b', random_variable=True)
+rv_c = Semantics.Sentence('c', random_variable=True)
 
 
 class TestBABAProgramParser(unittest.TestCase):
@@ -76,6 +80,18 @@ class TestBABAProgramParser(unittest.TestCase):
         self.assertFalse(Parser.matches_random_variable_declaration('myRv(a, 0.4).'))
         self.assertFalse(Parser.matches_random_variable_declaration('myRV(abc, 0.9)'))
 
+    def test_matches_conditional_random_variable_declaration(self):
+        self.assertFalse(Parser.matches_random_variable_declaration('myRV(a, [b], [(b): 0.4, (~b): 0.3]).'))
+        self.assertTrue(Parser.matches_conditional_random_variable_declaration('myRV(a, [b], [(b): 0.4, (~b): 0.3]).'))
+        self.assertFalse(Parser.matches_random_variable_declaration(
+            'myRV(a, [b, c], [(b,c): 0.2, (b,~c): 0.4, (~b, c): 0.1, (~b, ~c): 0.7)]).'))
+        self.assertTrue(Parser.matches_conditional_random_variable_declaration(
+            'myRV(a, [b, c], [(b,c): 0.2, (b,~c): 0.4, (~b, c): 0.1, (~b, ~c): 0.7)]).'))
+        self.assertFalse(Parser.matches_random_variable_declaration(
+            'myRV( a , [ c ] , [(~c) : 0.3, (c): 0.2]).'))
+        self.assertTrue(Parser.matches_conditional_random_variable_declaration(
+            'myRV( a , [ c ] , [(~c) : 0.3, (c): 0.2]).'))
+
     def test_extract_assumption(self):
         self.assertEqual(Parser.extract_assumption('myAsm(a).'), Semantics.Sentence('a'))
         self.assertEqual(Parser.extract_assumption('myAsm(myAsm).'), Semantics.Sentence('myAsm'))
@@ -103,6 +119,76 @@ class TestBABAProgramParser(unittest.TestCase):
                          Parser.extract_random_variable('myRV(t, 1).'))
         self.assertEqual((Semantics.Sentence('a', random_variable=True), 0.1),
                          Parser.extract_random_variable('myRV(a,0.1).'))
+
+    def test_extract_conditional_variables(self):
+        variables = '[a, b]'
+        extracted_variables = Parser.extract_conditional_variables(variables)
+        self.assertEqual(2, len(extracted_variables))
+        self.assertTrue(all([elem in [Semantics.Sentence('a', random_variable=True),
+                                      Semantics.Sentence('b', random_variable=True)]
+                             for elem in extracted_variables]))
+
+        variables = '[a  ,  c, b  ]'
+        extracted_variables = Parser.extract_conditional_variables(variables)
+        self.assertEqual(3, len(extracted_variables))
+        self.assertTrue(all([elem in [Semantics.Sentence('a', random_variable=True),
+                                      Semantics.Sentence('b', random_variable=True),
+                                      Semantics.Sentence('c', random_variable=True)]
+                             for elem in extracted_variables]))
+
+        variables = '[c  ,  a ]'
+        extracted_variables = Parser.extract_conditional_variables(variables)
+        self.assertEqual(2, len(extracted_variables))
+        self.assertTrue(all([elem in [Semantics.Sentence('a', random_variable=True),
+                                      Semantics.Sentence('c', random_variable=True)]
+                             for elem in extracted_variables]))
+
+        rv_a = Semantics.Sentence('a', random_variable=True)
+        rv_b = Semantics.Sentence('b', random_variable=True)
+        rv_c = Semantics.Sentence('c', random_variable=True)
+        self.assertTrue(rv_a in Parser.extract_conditional_variables("[ a]"))
+        self.assertTrue(all(elem in [rv_a, rv_b, rv_c] for elem in Parser.extract_conditional_variables("[b, c , a]")))
+
+    def test_extract_conditional_probability(self):
+        test_map = {"b": 0.4, "~b": 0.3}
+        extracted_map = Parser.extract_conditional_probabilities('[b: 0.4, ~b: 0.3]')
+        self.assertEqual(len(test_map), len(extracted_map))
+        self.assertEqual(test_map['b'], extracted_map['b'])
+        self.assertEqual(test_map['~b'], extracted_map['~b'])
+
+        test_map = {"bc": 0.2, "b~c": 0.4, "~bc": 0.1, "~b~c": 0.7}
+        extracted_map = Parser.extract_conditional_probabilities(
+            '[bc: 0.2, b~c: 0.4, ~bc: 0.1, ~b~c: 0.7]')
+        self.assertEqual(len(test_map), len(extracted_map))
+        self.assertEqual(test_map['bc'], extracted_map['bc'])
+        self.assertEqual(test_map['bc'], extracted_map['bc'])
+        self.assertEqual(test_map['~bc'], extracted_map['~bc'])
+        self.assertEqual(test_map['~b~c'], extracted_map['~b~c'])
+
+        test_map = {"~c": 0.3, "c": 0.2}
+        extracted_map = Parser.extract_conditional_probabilities('[~c : 0.3, c: 0.2]')
+        self.assertEqual(len(test_map), len(extracted_map))
+        self.assertEqual(test_map['c'], extracted_map['c'])
+        self.assertEqual(test_map['~c'], extracted_map['~c'])
+
+    def test_extract_conditional_random_variable(self):
+        cond_prob = Bayesian.ConditionalProbability(rv_a, [rv_b], {'b': 0.4, '~b': 0.3})
+        parsed_rv, parsed_probability = Parser.extract_conditional_random_variable(
+            'myRV(a, [b], [b: 0.4, ~b: 0.3]).')
+        self.assertEqual(Semantics.Sentence('a', random_variable=True), parsed_rv)
+        self.assertTrue(cond_prob == parsed_probability)
+
+        cond_prob = Bayesian.ConditionalProbability(rv_a, [rv_b, rv_c], {'bc': 0.2, 'b~c': 0.4, '~bc': 0.1, '~b~c': 0.7})
+        parsed_rv, parsed_probability = Parser.extract_conditional_random_variable(
+            'myRV(a, [b, c], [bc: 0.2, b~c: 0.4, ~bc: 0.1, ~b~c: 0.7]).')
+        self.assertEqual(Semantics.Sentence('a', random_variable=True), parsed_rv)
+        self.assertTrue(cond_prob == parsed_probability)
+
+        cond_prob = Bayesian.ConditionalProbability(rv_a, [rv_c], {'c': 0.2, '~c': 0.3})
+        parsed_rv, parsed_probability = Parser.extract_conditional_random_variable(
+            'myRV( a , [ c ] , [~c : 0.3, c: 0.2]).')
+        self.assertEqual(Semantics.Sentence('a', random_variable=True), parsed_rv)
+        self.assertTrue(cond_prob == parsed_probability)
 
     def test_extract_from_parentheses(self):
         self.assertEqual(Parser.extract_from_parentheses('myAsm(abcde).'), 'abcde')
@@ -165,3 +251,9 @@ class TestBABAProgramParser(unittest.TestCase):
         self.assertEqual(0.64, Semantics.semantic_probability(Semantics.GROUNDED, baba, [a, ExampleFrameworks.j]))
         self.assertEqual(0.6, Semantics.semantic_probability(Semantics.GROUNDED, baba, [b]))
         self.assertEqual(1.0, Semantics.semantic_probability(Semantics.GROUNDED, baba, [c]))
+
+    def test_integration_framework_with_conditional_random_variables(self):
+        parser = Parser.BABAProgramParser(filename='BABA_program_4')
+        baba = parser.parse()
+        a_prob = Semantics.semantic_probability(Semantics.GROUNDED, baba, [ExampleFrameworks.a])
+        self.assertTrue(True)

@@ -5,6 +5,18 @@ import re
 FILENAME = 'filename'
 STRING = 'string'
 
+######################################################
+# BABA framework definition syntax
+
+# Elements:
+# assumptions: myAsm(<assumption>) -> myAsm(a)
+# contraries: contrary(<assumption>, <assumption contrary>) -> contrary(a, _a)
+# random variables: myRV(<random variable>, <probability>) -> myRV(a, 0.5)
+# conditional random variables: myRV(<random variable>, <set of conditional variables>, <conditional probabilities>):
+#   -> myRV(a, [b,c], [(a,b): 0.3, (~a,b): 0.4, (a,~b): 0.5, (~a,~b): 0.6]) -> conditional random variables
+
+######################################################
+
 
 # Class for parsing an BABA program from string or file
 # The String or File is provided in the constructor (precedence for String)
@@ -65,6 +77,12 @@ class BABAProgramParser:
                 self.language.append(rv)
                 self.bayesian_network[rv.symbol] = probability
 
+            elif matches_conditional_random_variable_declaration(line):
+                rv, probability = extract_conditional_random_variable(line)
+                self.random_variables.append(rv)
+                self.language.append(rv)
+                self.bayesian_network[rv.symbol] = probability
+
         for rule in rules:
             extracted_rule = extract_rule(rule, self.random_variables)
             rule_elements = extracted_rule.body + [extracted_rule.head]
@@ -96,6 +114,7 @@ assumption_regex = '\s*myAsm\([\w]+\)\.\s*$'
 rule_regex = '\s*myRule\(\s*[\w]+\s*,\s*\[([\w]|,|\s*)+\]\)\.\s*$'
 contrary_regex = '\s*contrary\(\s*[\w]+\s*,\s*[\w]+\s*\)\.\s*$'
 random_variable_regex = '\s*myRV\(\s*[\w]+\s*,\s*' + decimal_number_regex + '\s*\)\.\s*'
+conditional_rv_regex = '\s*myRV\(\s*[\w]+\s*,\s*\[.*\]\s*,\s*\[.*\]\s*\)\.\s*$'
 
 
 # myAsm(sentence).
@@ -114,8 +133,13 @@ def matches_contrary_declaration(contrary):
 
 
 # myRV(sentence).
-def matches_random_variable_declaration(random_variable):
-    return True if re.match(random_variable_regex, random_variable) else False
+def matches_random_variable_declaration(text):
+    return True if re.match(random_variable_regex, text) else False
+
+
+# myRV(sentence, [conditional rvs], [conditional probabilities])
+def matches_conditional_random_variable_declaration(text):
+    return True if re.match(conditional_rv_regex, text) else False
 
 
 ############################################################################
@@ -163,6 +187,36 @@ def extract_random_variable(random_variable):
     rv = Semantics.Sentence(extracted[0].strip(), random_variable=True)
     probability = float(extracted[1].strip())
     return rv, probability
+
+
+def extract_conditional_random_variable(text):
+    if not matches_conditional_random_variable_declaration(text):
+        raise ProgramParseException("Provided conditional random variable does not match required format")
+
+    rv_definition = extract_from_parentheses(text)
+    arguments = rv_definition.split('[')
+    sentence = Semantics.Sentence(arguments.pop(0).split(',')[0].strip(), random_variable=True)
+    conditional_variables = extract_conditional_variables('[' + arguments.pop(0))
+    conditional_probabilities = extract_conditional_probabilities('[' + ''.join(arguments))
+    conditional_probability = Bayesian.ConditionalProbability(sentence, conditional_variables, conditional_probabilities)
+    return sentence, conditional_probability
+
+
+def extract_conditional_variables(text):
+    variables = extract_from_square_brackets(text)
+    return [Semantics.Sentence(v.strip(), random_variable=True) for v in variables.split(',')]
+
+
+def extract_conditional_probabilities(text):
+    probability_map_string = extract_from_square_brackets(text)
+    probability_map = {}
+    for probability_pair in probability_map_string.split(','):
+        key_value = probability_pair.split(':')
+        key = key_value[0].strip()
+        value = float(key_value[1].strip())
+        probability_map[key] = value
+
+    return probability_map
 
 
 # Utility method that extracts the string from input of format: [\w]*\(<element>\)[\w]*
