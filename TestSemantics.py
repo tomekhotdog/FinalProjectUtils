@@ -518,3 +518,14 @@ class TestSemantics(unittest.TestCase):
         baba = ExampleFrameworks.conditional_cow_framework()
         self.assertAlmostEqual(0.02, baba.BN.p_world([ExampleFrameworks.cond_JN, ExampleFrameworks.JF, ExampleFrameworks.CM]))
         self.assertAlmostEqual(0.72, Semantics.semantic_probability(Semantics.GROUNDED, baba, [ExampleFrameworks.HP]))
+
+    def test_language_semantic_probability(self):
+        baba = ExampleFrameworks.r_framework()
+        grounded_probabilities = Semantics.language_semantic_probability(Semantics.GROUNDED, baba)
+        self.assertEqual(0.64, grounded_probabilities[ExampleFrameworks.a.symbol])
+        self.assertEqual(0.36, grounded_probabilities[ExampleFrameworks._a.symbol])
+        self.assertEqual(0.6, grounded_probabilities[ExampleFrameworks.b.symbol])
+        self.assertEqual(0.4, grounded_probabilities[ExampleFrameworks._b.symbol])
+        self.assertEqual(1.0, grounded_probabilities[ExampleFrameworks.c.symbol])
+        self.assertEqual(0.0, grounded_probabilities[ExampleFrameworks._c.symbol])
+        self.assertEqual(0.64, grounded_probabilities[ExampleFrameworks.j.symbol])

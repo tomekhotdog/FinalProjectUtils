@@ -388,6 +388,34 @@ def semantic_probability(semantics, baba, sentences):
     return acceptability_probability
 
 
+# Returns a dictionary of {symbol : semantic probability}
+def language_semantic_probability(semantics, baba):
+    language_probability = {}
+    for sentence in baba.language:
+        language_probability[sentence.symbol] = 0.0
+
+    worlds = Utils.generate_worlds(baba.random_variables)
+    for world in worlds:
+        baba.set_random_variable_world(world)
+
+        if semantics == GROUNDED:
+            semantic_sets = grounded(baba)
+        elif semantics == SCEPTICALLY_PREFERRED:
+            semantic_sets = sceptically_preferred(baba)
+        elif semantics == IDEAL:
+            semantic_sets = ideal(baba)
+        else:
+            raise InvalidSemanticsException("Invalid semantics chosen: " + str(semantics))
+
+        world_probability = baba.BN.p_world(world)
+        for a_set in semantic_sets:
+            for sentence in [s for s in baba.language if s not in baba.random_variables]:
+                if derivable(baba, sentence, a_set.elements + baba.rv_world):
+                    language_probability[sentence.symbol] += world_probability
+
+    return language_probability
+
+
 ############################################################
 
 # The following methods check the given list of assumptions
