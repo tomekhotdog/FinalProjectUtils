@@ -389,7 +389,7 @@ def semantic_probability(semantics, baba, sentences):
 
 
 # Returns a dictionary of {symbol : semantic probability}
-def language_semantic_probability(semantics, baba):
+def compute_semantic_probability(semantics, baba):
     language_probability = {}
     for sentence in baba.language:
         language_probability[sentence.symbol] = 0.0
@@ -409,12 +409,30 @@ def language_semantic_probability(semantics, baba):
 
         world_probability = baba.BN.p_world(world)
         for a_set in semantic_sets:
-            for sentence in [s for s in baba.language if s not in baba.random_variables]:
+            for sentence in [s for s in baba.language]:
                 if derivable(baba, sentence, a_set.elements + baba.rv_world):
                     language_probability[sentence.symbol] += world_probability
 
     return language_probability
 
+
+# Returns a tuple of the semantic probabilities for a BABA
+# (probabilities given as lists of (sentence, probability) string tuple
+def compute_semantic_probabilities(baba):
+    grounded_probabilities = compute_semantic_probability(GROUNDED, baba)
+    grounded_tuples = [(sentence, "{0:.2f}".format(probability)) for sentence, probability in grounded_probabilities.items()]
+    grounded_tuples = sorted(grounded_tuples, key=lambda item: item[0])
+
+    s_preferred = compute_semantic_probability(SCEPTICALLY_PREFERRED, baba)
+    s_preferred_tuples = [(sentence, "{0:.2f}".format(probability))
+                          for sentence, probability in s_preferred.items()]
+    s_preferred_tuples = sorted(s_preferred_tuples, key=lambda item: item[0])
+
+    ideal_probabilities = compute_semantic_probability(IDEAL, baba)
+    ideal_tuples = [(sentence, "{0:.2f}".format(probability)) for sentence, probability in ideal_probabilities.items()]
+    ideal_tuples = sorted(ideal_tuples, key=lambda item: item[0])
+
+    return grounded_tuples, s_preferred_tuples, ideal_tuples
 
 ############################################################
 

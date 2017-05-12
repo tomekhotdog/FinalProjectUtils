@@ -254,8 +254,10 @@ class TestBABAProgramParser(unittest.TestCase):
     def test_integration_framework_with_conditional_random_variables(self):
         parser = Parser.BABAProgramParser(filename='BABA_program_4')
         baba = parser.parse()
-        lang_prob = Semantics.language_semantic_probability(Semantics.GROUNDED, baba)
+        lang_prob = Semantics.compute_semantic_probability(Semantics.GROUNDED, baba)
         self.assertAlmostEqual(0.775, lang_prob[ExampleFrameworks.b.symbol])
-        self.assertAlmostEqual(0.81852, lang_prob[ExampleFrameworks.c.symbol])
+        self.assertAlmostEqual(0.6625, lang_prob[ExampleFrameworks.c.symbol])
+        self.assertAlmostEqual(0.45, lang_prob['o'])
+        self.assertAlmostEqual(0.75, lang_prob['p'])
         self.assertAlmostEqual(1.0, lang_prob[ExampleFrameworks.d.symbol])
         self.assertAlmostEqual(1.0, lang_prob[ExampleFrameworks.e.symbol])

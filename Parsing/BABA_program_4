@@ -13,8 +13,8 @@ myRule(_a, [c, t]).
 myRule(_b, [d, u, v]).
 myRule(_c, [e, o, p]).
 myRV(s, 0.6).
-myRV(t, [u, v], [uv: 0.4, u~v: 0.55, ~uv: 0.6, ~u~v: 0.45]).
-myRV(o, [t], [t: 0.3, ~t: 0.4]).
-myRV(p, [s], [s: 0.8, ~s: 0.1]).
 myRV(u, 0.9).
 myRV(v, 0.25).
+myRV(t, [o, p], [op: 0.4, o~p: 0.55, ~op: 0.6, ~o~p: 0.45]).
+myRV(o, 0.45).
+myRV(p, 0.75).

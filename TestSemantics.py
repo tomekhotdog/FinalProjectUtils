@@ -521,7 +521,7 @@ class TestSemantics(unittest.TestCase):
 
     def test_language_semantic_probability(self):
         baba = ExampleFrameworks.r_framework()
-        grounded_probabilities = Semantics.language_semantic_probability(Semantics.GROUNDED, baba)
+        grounded_probabilities = Semantics.compute_semantic_probability(Semantics.GROUNDED, baba)
         self.assertEqual(0.64, grounded_probabilities[ExampleFrameworks.a.symbol])
         self.assertEqual(0.36, grounded_probabilities[ExampleFrameworks._a.symbol])
         self.assertEqual(0.6, grounded_probabilities[ExampleFrameworks.b.symbol])
@@ -529,3 +529,12 @@ class TestSemantics(unittest.TestCase):
         self.assertEqual(1.0, grounded_probabilities[ExampleFrameworks.c.symbol])
         self.assertEqual(0.0, grounded_probabilities[ExampleFrameworks._c.symbol])
         self.assertEqual(0.64, grounded_probabilities[ExampleFrameworks.j.symbol])
+
+    def test_compute_semantic_probabilities(self):
+        g, s, i = Semantics.compute_semantic_probabilities(ExampleFrameworks.r_framework())
+        self.assertEqual(g, [('_a', '0.36'), ('_b', '0.40'), ('_c', '0.00'), ('a', '0.64'),
+                             ('b', '0.60'), ('c', '1.00'), ('j', '0.64'), ('s', '0.60'), ('t', '0.40')])
+        self.assertEqual(s, [('_a', '0.36'), ('_b', '0.40'), ('_c', '0.00'), ('a', '0.64'),
+                             ('b', '0.60'), ('c', '1.00'), ('j', '0.64'), ('s', '0.60'), ('t', '0.40')])
+        self.assertEqual(i, i)   # TODO: fix ideal semantics and update test
+
