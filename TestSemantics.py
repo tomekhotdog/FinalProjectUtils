@@ -548,5 +548,6 @@ class TestSemantics(unittest.TestCase):
                              ('b', '0.60'), ('c', '1.00'), ('j', '0.64'), ('s', '0.60'), ('t', '0.40')])
         self.assertEqual(s, [('_a', '0.36'), ('_b', '0.40'), ('_c', '0.00'), ('a', '0.64'),
                              ('b', '0.60'), ('c', '1.00'), ('j', '0.64'), ('s', '0.60'), ('t', '0.40')])
-        self.assertEqual(i, i)   # TODO: fix ideal semantics and update test
+        self.assertEqual(i, [('_a', '0.36'), ('_b', '0.40'), ('_c', '0.00'), ('a', '0.64'),
+                             ('b', '0.60'), ('c', '1.00'), ('j', '0.64'), ('s', '0.60'), ('t', '0.40')])
 
