@@ -519,7 +519,7 @@ class TestSemantics(unittest.TestCase):
         self.assertAlmostEqual(0.02, baba.BN.p_world([ExampleFrameworks.cond_JN, ExampleFrameworks.JF, ExampleFrameworks.CM]))
         self.assertAlmostEqual(0.72, Semantics.semantic_probability(Semantics.GROUNDED, baba, [ExampleFrameworks.HP]))
 
-    def test_language_semantic_probability(self):
+    def test_compute_grounded_probability(self):
         baba = ExampleFrameworks.r_framework()
         grounded_probabilities = Semantics.compute_semantic_probability(Semantics.GROUNDED, baba)
         self.assertEqual(0.64, grounded_probabilities[ExampleFrameworks.a.symbol])
@@ -529,6 +529,18 @@ class TestSemantics(unittest.TestCase):
         self.assertEqual(1.0, grounded_probabilities[ExampleFrameworks.c.symbol])
         self.assertEqual(0.0, grounded_probabilities[ExampleFrameworks._c.symbol])
         self.assertEqual(0.64, grounded_probabilities[ExampleFrameworks.j.symbol])
+
+    def test_compute_ideal_probability(self):
+        ideal_probabilities = Semantics.compute_semantic_probability(Semantics.IDEAL, ExampleFrameworks.r_framework())
+        self.assertAlmostEqual(0.64, ideal_probabilities[ExampleFrameworks.a.symbol])
+        self.assertAlmostEqual(0.36, ideal_probabilities[ExampleFrameworks._a.symbol])
+        self.assertAlmostEqual(0.60, ideal_probabilities[ExampleFrameworks.b.symbol])
+        self.assertAlmostEqual(0.40, ideal_probabilities[ExampleFrameworks._b.symbol])
+        self.assertAlmostEqual(1.0, ideal_probabilities[ExampleFrameworks.c.symbol])
+        self.assertAlmostEqual(0.0, ideal_probabilities[ExampleFrameworks._c.symbol])
+        self.assertAlmostEqual(0.64, ideal_probabilities[ExampleFrameworks.j.symbol])
+        self.assertAlmostEqual(0.6, ideal_probabilities[ExampleFrameworks.s.symbol])
+        self.assertAlmostEqual(0.4, ideal_probabilities[ExampleFrameworks.t.symbol])
 
     def test_compute_semantic_probabilities(self):
         g, s, i = Semantics.compute_semantic_probabilities(ExampleFrameworks.r_framework())
