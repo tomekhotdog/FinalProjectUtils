@@ -149,7 +149,6 @@ cond_neg_JN = Semantics.Sentence('JN', random_variable=True, negation=True)
 # conditional_cow_framework
 # Example 6 BABA framework as described in ['On Probabilistic Argumentation', 2016, Thang et al.]
 def conditional_cow_framework():
-
     language = [HP, not_HP, HOC, not_HOC, CCA, not_CCA, FM, not_FM, cond_JN, cond_neg_JN, JF, CM]
     rules = [Semantics.Rule(HP, [HOC, CCA, not_FM]), Semantics.Rule(HOC, []),
              Semantics.Rule(FM, [CM]), Semantics.Rule(CCA, [cond_neg_JN])]
@@ -157,7 +156,7 @@ def conditional_cow_framework():
     contraries = {not_HP: Semantics.Contrary(not_HP, HP), not_HOC: Semantics.Contrary(not_HOC, HOC),
                   not_CCA: Semantics.Contrary(not_CCA, CCA), not_FM: Semantics.Contrary(not_FM, FM)}
     random_variables = [cond_JN, JF, CM]
-    BN = Bayesian.BayesianNetwork({cond_JN.symbol: Bayesian.ConditionalProbability(cond_JN.symbol, [JF], {"JF": 0.8, "~JF": 0}),
+    BN = Bayesian.BayesianNetwork({cond_JN.symbol: Bayesian.ConditionalProbability(cond_JN.symbol, [JF], {"JF": 0.8, "~JF": 0.0}),
                                    JF.symbol: 0.25, CM.symbol: 0.1})
     return Semantics.BABA(language, rules, assumptions, contraries, random_variables, BN)
 

@@ -28,6 +28,7 @@ _sentence = Semantics.Sentence('_sentence')
 rv_a = Semantics.Sentence('a', random_variable=True)
 rv_b = Semantics.Sentence('b', random_variable=True)
 rv_c = Semantics.Sentence('c', random_variable=True)
+rv_c_neg = Semantics.Sentence('c', random_variable=True, negation=True)
 
 
 class TestBABAProgramParser(unittest.TestCase):
@@ -100,7 +101,8 @@ class TestBABAProgramParser(unittest.TestCase):
         self.assertEqual(Parser.extract_rule('myRule(a, [b,c]).', []), Semantics.Rule(a, [b, c]))
         self.assertEqual(Parser.extract_rule('myRule(a,[b , c,    d]).', []), Semantics.Rule(a, [b, c, d]))
         self.assertEqual(Parser.extract_rule('myRule(abc, [ab, bc, bd]).', []), Semantics.Rule(abc, [ab, bc, bd]))
-        self.assertEqual(Parser.extract_rule('myRule(t, [a, b, c]).', []), Semantics.Rule(t, [a, b, c]))
+        self.assertEqual(Parser.extract_rule('myRule(t, [a, b, ~c]).', [rv_c]), Semantics.Rule(t, [a, b, rv_c_neg]))
+        self.assertEqual(Parser.extract_rule('myRule(t, []).', []), Semantics.Rule(t, []))
 
     def test_extract_contrary(self):
         self.assertEqual(Parser.extract_contrary('contrary(a, _a).'), Semantics.Contrary(a, _a))
@@ -117,6 +119,8 @@ class TestBABAProgramParser(unittest.TestCase):
                          Parser.extract_random_variable('myRV(t, 1).'))
         self.assertEqual((Semantics.Sentence('a', random_variable=True), 0.1),
                          Parser.extract_random_variable('myRV(a,0.1).'))
+        self.assertEqual((Semantics.Sentence('a', random_variable=True, negation=True), 0.9),
+                         Parser.extract_random_variable('myRV( ~a, 0.1).'))
 
     def test_extract_conditional_variables(self):
         variables = '[a, b]'

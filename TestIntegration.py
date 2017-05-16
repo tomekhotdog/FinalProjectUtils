@@ -53,3 +53,8 @@ class TestIntegration(unittest.TestCase):
         baba = parser.parse()
         lang_prob = Semantics.compute_semantic_probability(Semantics.GROUNDED, baba)
         self.assertAlmostEqual(0.2, lang_prob[ExampleFrameworks.a.symbol])
+
+    def test_integration_cow_framework(self):
+        baba = Parser.BABAProgramParser(filename='Parsing/BABA_cow_program').parse()
+        lang_prob = Semantics.compute_semantic_probability(Semantics.GROUNDED, baba)
+        self.assertAlmostEqual(0.72, lang_prob[ExampleFrameworks.HP.symbol])
