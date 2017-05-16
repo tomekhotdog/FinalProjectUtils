@@ -11,6 +11,8 @@ a = Semantics.Sentence('a')
 b = Semantics.Sentence('b')
 c = Semantics.Sentence('c')
 d = Semantics.Sentence('d')
+e = Semantics.Sentence('e')
+f = Semantics.Sentence('f')
 
 
 class TestSemantics(unittest.TestCase):
@@ -111,3 +113,9 @@ class TestSemantics(unittest.TestCase):
 
         eight_worlds = Utils.generate_worlds([a, b, c])
         self.assertEqual(8, len(eight_worlds))
+
+    def test_extensions_and_derivations_to_str_list(self):
+        ext_deriv = [(Semantics.SemanticSet([a, b, c]), [d, e, f]),
+                     (Semantics.SemanticSet([d, e, f]), [a, b, c])]
+        string_representation = Utils.extensions_and_derivations_to_str_list(ext_deriv)
+        self.assertEqual(['{a, b, c} |- {d, e, f}', '{d, e, f} |- {a, b, c}'], string_representation)
