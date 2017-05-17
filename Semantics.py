@@ -1,4 +1,4 @@
-import SemanticsUtils as Utils
+from SemanticsUtils import *
 
 
 GROUNDED = 1
@@ -200,7 +200,7 @@ def required_to_derive(baba, claim):
         if rule.head == claim:
             for sentence in rule.body:
                 required_to_derive_sentence = required_to_derive(baba, sentence)
-                required_to_derive_claim = Utils.list_combinations(required_to_derive_claim, required_to_derive_sentence)
+                required_to_derive_claim = list_combinations(required_to_derive_claim, required_to_derive_sentence)
 
             for derivation in required_to_derive_claim:
                 if derivable(baba, claim, derivation):
@@ -290,7 +290,7 @@ def admissible(baba, assumptions):
 
 # Generates the complete set of admissible sets of assumptions
 def generate_admissible(baba):
-    return set([SemanticSet(elem) for elem in Utils.powerset(baba.assumptions) if admissible(baba, elem)])
+    return set([SemanticSet(elem) for elem in powerset(baba.assumptions) if admissible(baba, elem)])
 
 
 ############################################################
@@ -313,7 +313,7 @@ def preferred(baba, admissibles=None):
 def sceptically_preferred(baba, admissibles=None):
     admissible_sets = admissibles if admissibles is not None else generate_admissible(baba)
     preferred_sets = preferred(baba, admissible_sets)
-    return set([Utils.group_intersection(preferred_sets)])
+    return set([group_intersection(preferred_sets)])
 
 
 def complete(baba, admissibles=None):
@@ -330,7 +330,7 @@ def complete(baba, admissibles=None):
 
 def grounded(baba, admissibles=None):
     admissible_sets = admissibles if admissibles is not None else generate_admissible(baba)
-    return set(Utils.minimal_set(complete(baba, admissible_sets)))
+    return set(minimal_set(complete(baba, admissible_sets)))
 
 
 # TODO: clear up definition. Definition provided: "ideal: iff it is maximally (w.r.t. ⊆) admissible and contained in
@@ -362,7 +362,7 @@ def semantic_probability(semantics, baba, sentences):
     if not all([s in baba.language for s in sentences]):
         raise InvalidBABAException("Semantic probability enquired for invalid set of sentences")
 
-    worlds = Utils.generate_worlds(baba.random_variables)
+    worlds = generate_worlds(baba.random_variables)
     acceptability_probability = 0.0
 
     for world in worlds:
@@ -394,7 +394,7 @@ def compute_semantic_probability(semantics, baba):
     for sentence in baba.language:
         language_probability[sentence.symbol] = 0.0
 
-    worlds = Utils.generate_worlds(baba.random_variables)
+    worlds = generate_worlds(baba.random_variables)
     for world in worlds:
         baba.set_random_variable_world(world)
 
@@ -433,20 +433,3 @@ def compute_semantic_probabilities(baba):
     ideal_tuples = sorted(ideal_tuples, key=lambda item: item[0])
 
     return grounded_tuples, s_preferred_tuples, ideal_tuples
-
-############################################################
-
-# The following methods check the given list of assumptions
-# for membership in the corresponding semantics
-
-# def verify_preferred(baba, assumptions):
-#
-# def verify_sceptically_preferred(baba, assumptions):
-#
-# def verify_complete(baba, assumptions):
-#
-# def verify_grounded(baba, assumptions):
-#
-# def verify_ideal(baba, assumptions):
-#
-# def verify_stable(baba, assumptions):

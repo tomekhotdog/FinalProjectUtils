@@ -80,3 +80,15 @@ def extensions_and_derivations_to_str_list(extension_derivation_tuples):
         string_list.append('{' + ', '.join([s.symbol for s in extension.elements]) + '}' + " |- " +
                            '{' + ', '.join([s.symbol for s in derivation]) + '}')
     return string_list
+
+
+# Returns a tuple of lists of strings representing a baba framework
+# ([language], [assumptions], [contraries], [random variables], [rules])
+def string_representation(baba):
+    language = [str(elem) for elem in baba.language]
+    assumptions = [str(elem) for elem in baba.assumptions]
+    contraries = [str(elem) for elem in baba.contraries]
+    rvs = [str(elem) for elem in baba.random_variables]
+    rules = [str(elem) for elem in baba.rules]
+
+    return language, assumptions, contraries, rvs, rules
