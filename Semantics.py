@@ -416,20 +416,21 @@ def compute_semantic_probability(semantics, baba):
     return language_probability
 
 
+# Returns semantic probabilities for a BABA framework for given semantics
+def compute_semantic_probabilities_for_semantics(baba, semantics):
+    probabilities = compute_semantic_probability(semantics, baba)
+    tuples = [(sentence, "{0:.3f}".format(probability)) for sentence, probability in probabilities.items()]
+    tuples = sorted(tuples, key=lambda item: item[0])
+
+    return tuples
+
+
 # Returns a tuple of the semantic probabilities for a BABA
 # (probabilities given as lists of (sentence, probability) string tuple
 def compute_semantic_probabilities(baba):
-    grounded_probabilities = compute_semantic_probability(GROUNDED, baba)
-    grounded_tuples = [(sentence, "{0:.2f}".format(probability)) for sentence, probability in grounded_probabilities.items()]
-    grounded_tuples = sorted(grounded_tuples, key=lambda item: item[0])
-
-    s_preferred = compute_semantic_probability(SCEPTICALLY_PREFERRED, baba)
-    s_preferred_tuples = [(sentence, "{0:.2f}".format(probability))
-                          for sentence, probability in s_preferred.items()]
-    s_preferred_tuples = sorted(s_preferred_tuples, key=lambda item: item[0])
-
-    ideal_probabilities = compute_semantic_probability(IDEAL, baba)
-    ideal_tuples = [(sentence, "{0:.2f}".format(probability)) for sentence, probability in ideal_probabilities.items()]
-    ideal_tuples = sorted(ideal_tuples, key=lambda item: item[0])
+    grounded_tuples = compute_semantic_probabilities_for_semantics(baba, GROUNDED)
+    s_preferred_tuples = compute_semantic_probabilities_for_semantics(baba, SCEPTICALLY_PREFERRED)
+    ideal_tuples = compute_semantic_probabilities_for_semantics(baba, IDEAL)
 
     return grounded_tuples, s_preferred_tuples, ideal_tuples
+
