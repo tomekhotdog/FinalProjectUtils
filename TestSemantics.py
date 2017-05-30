@@ -448,6 +448,15 @@ class TestSemantics(unittest.TestCase):
         self.assertIn(Semantics.SemanticSet([f]), sceptically_preferred_sets)
         self.assertEqual(1, len(sceptically_preferred_sets))
 
+    def test_ideal_framework(self):
+        sceptically_preferred_sets = Semantics.sceptically_preferred(ExampleFrameworks.ideal_framework())
+        self.assertIn(Semantics.SemanticSet([a]), sceptically_preferred_sets)
+        self.assertEqual(1, len(sceptically_preferred_sets))
+
+        ideal_sets = Semantics.ideal(ExampleFrameworks.ideal_framework())
+        self.assertIn(Semantics.SemanticSet([]), ideal_sets)
+        self.assertEqual(1, len(ideal_sets))
+
 #############################################################
 # BABA semantics testing (with random variables)
 

@@ -333,8 +333,6 @@ def grounded(baba, admissibles=None):
     return set(minimal_set(complete(baba, admissible_sets)))
 
 
-# TODO: clear up definition. Definition provided: "ideal: iff it is maximally (w.r.t. ⊆) admissible and contained in
-# all preferred sets of assumptions" - however, preferred === maximally admissible? (implementation appears to work)
 def ideal(baba, admissibles=None):
     admissible_sets = admissibles if admissibles is not None else generate_admissible(baba)
     preferred_sets = preferred(baba, admissible_sets)

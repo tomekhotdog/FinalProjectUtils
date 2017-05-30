@@ -179,6 +179,23 @@ def r_framework():
     bayes_net = Bayesian.BayesianNetwork({s.symbol: 0.6, t.symbol: 0.4})
     return Semantics.BABA(language, rules, assumptions, contraries, random_variables, bayes_net)
 
+
+########################################################################################
+# BABA framework that shows the distinction between sceptically preferred and ideal semantics
+#
+#            <-- c
+# a  <--  b      |
+#            <-- d
+#
+def ideal_framework():
+    language = [a, _a, b, _b, c, _c, d, _d]
+    rules = [Semantics.Rule(_a, [b]), Semantics.Rule(_b, [c]),
+             Semantics.Rule(_b, [d]), Semantics.Rule(_c, [d]), Semantics.Rule(_d, [c])]
+    assumptions = [a, b, c, d]
+    contraries = {a: Semantics.Contrary(a, _a), b: Semantics.Contrary(b, _b),
+                  c: Semantics.Contrary(c, _c), d: Semantics.Contrary(d, _d)}
+    return Semantics.BABA(language, rules, assumptions, contraries, [], None)
+
 ########################################################################################
 
 
