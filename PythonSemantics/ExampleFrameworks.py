@@ -1,5 +1,4 @@
-import Semantics
-import Bayesian
+from PythonSemantics import Semantics, Bayesian
 
 a = Semantics.Sentence('a')
 b = Semantics.Sentence('b')
@@ -69,7 +68,7 @@ def with_contraries():
 def larger_framework():
     language = [a, b, c, d, e, f, g, h, i, j]
     rules = [Semantics.Rule(a, [b]), Semantics.Rule(a, [e, f]),
-             Semantics.Rule(c, [d, e, f]), Semantics.Rule(d, [g,  h]),
+             Semantics.Rule(c, [d, e, f]), Semantics.Rule(d, [g, h]),
              Semantics.Rule(d, [i]), Semantics.Rule(j, [])]
     assumptions = [b, e, f, g, h, i]
     contraries = {b: Semantics.Contrary(b, c)}

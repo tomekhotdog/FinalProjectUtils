@@ -1,7 +1,7 @@
 import unittest
-from Parsing import BABAProgramParser as Parser
-import Semantics
-import ExampleFrameworks
+
+from PythonSemantics import ExampleFrameworks, Semantics
+from PythonSemantics.Parsing import BABAProgramParser as Parser
 
 program_1_string = "myAsm(a).\nmyAsm(b).\nmyAsm(c).\nmyAsm(d).\nmyAsm(e).\n" \
          "contrary(a, _a).\ncontrary(b, _b).\ncontrary(c, _c).\ncontrary(d, _d)." \

@@ -1,6 +1,5 @@
 import unittest
-import SemanticsUtils as Utils
-import Semantics
+from PythonSemantics import SemanticsUtils as Utils, Semantics
 
 list_a = ['a', 'b']
 list_b = ['c', 'd']
@@ -88,7 +87,7 @@ class TestSemantics(unittest.TestCase):
         set_e = Semantics.SemanticSet([a, c, d])
         set_f = Semantics.SemanticSet([a, b, c, d])
 
-        minimal_sets = Semantics.Utils.minimal_set(set([set_a, set_b, set_c, set_d, set_e, set_f]))
+        minimal_sets = Utils.minimal_set(set([set_a, set_b, set_c, set_d, set_e, set_f]))
 
         self.assertIn(set_a, minimal_sets)
         self.assertIn(set_b, minimal_sets)

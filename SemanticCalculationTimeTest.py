@@ -1,6 +1,7 @@
-import Parsing.BABAProgramParser as Parser
-import Semantics
 import time
+
+import PythonSemantics.Parsing.BABAProgramParser as Parser
+from PythonSemantics import Semantics
 
 print('Performing timing tests')
 

@@ -1,6 +1,7 @@
-import itertools
 import collections
-import Semantics
+import itertools
+
+from PythonSemantics import Semantics
 
 TURNSTILE = "&#x22a2;"
 

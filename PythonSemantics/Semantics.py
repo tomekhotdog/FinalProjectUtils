@@ -1,4 +1,4 @@
-from SemanticsUtils import *
+from PythonSemantics.SemanticsUtils import *
 
 
 GROUNDED = 1
@@ -272,7 +272,7 @@ def conflict_free(baba, assumptions):
 
 
 # Returns whether the list of assumptions is admissible in the BABA framework
-def admissible(baba, assumptions):
+def is_admissible(baba, assumptions):
     if not conflict_free(baba, assumptions):
         return False
 
@@ -289,8 +289,8 @@ def admissible(baba, assumptions):
 
 
 # Generates the complete set of admissible sets of assumptions
-def generate_admissible(baba):
-    return set([SemanticSet(elem) for elem in powerset(baba.assumptions) if admissible(baba, elem)])
+def admissible(baba):
+    return set([SemanticSet(elem) for elem in powerset(baba.assumptions) if is_admissible(baba, elem)])
 
 
 ############################################################
@@ -298,7 +298,7 @@ def generate_admissible(baba):
 # that satisfy the corresponding semantics
 
 def preferred(baba, admissibles=None):
-    admissible_sets = admissibles if admissibles is not None else generate_admissible(baba)
+    admissible_sets = admissibles if admissibles is not None else admissible(baba)
     preferred_sets = []
 
     for ad_set in admissible_sets:
@@ -311,13 +311,13 @@ def preferred(baba, admissibles=None):
 
 
 def sceptically_preferred(baba, admissibles=None):
-    admissible_sets = admissibles if admissibles is not None else generate_admissible(baba)
+    admissible_sets = admissibles if admissibles is not None else admissible(baba)
     preferred_sets = preferred(baba, admissible_sets)
     return set([group_intersection(preferred_sets)])
 
 
 def complete(baba, admissibles=None):
-    admissible_sets = admissibles if admissibles is not None else generate_admissible(baba)
+    admissible_sets = admissibles if admissibles is not None else admissible(baba)
     complete_sets = []
 
     for ad_set in admissible_sets:
@@ -329,19 +329,19 @@ def complete(baba, admissibles=None):
 
 
 def grounded(baba, admissibles=None):
-    admissible_sets = admissibles if admissibles is not None else generate_admissible(baba)
+    admissible_sets = admissibles if admissibles is not None else admissible(baba)
     return set(minimal_set(complete(baba, admissible_sets)))
 
 
 def ideal(baba, admissibles=None):
-    admissible_sets = admissibles if admissibles is not None else generate_admissible(baba)
+    admissible_sets = admissibles if admissibles is not None else admissible(baba)
     preferred_sets = preferred(baba, admissible_sets)
     return [p for p in admissible_sets if
             all([elem in other.elements for elem in p.elements for other in preferred_sets])]
 
 
 def stable(baba, admissibles=None):
-    admissible_sets = admissibles if admissibles is not None else generate_admissible(baba)
+    admissible_sets = admissibles if admissibles is not None else admissible(baba)
     stable_sets = []
     for admissible_set in admissible_sets:
         not_in_set = [elem for elem in baba.assumptions if elem not in admissible_set.elements]

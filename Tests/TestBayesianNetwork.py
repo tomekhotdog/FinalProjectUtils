@@ -1,6 +1,6 @@
 import unittest
-import Bayesian
-import Semantics
+
+from PythonSemantics import Semantics, Bayesian
 
 bn = Bayesian.BayesianNetwork({'a': 0.5, 'b': 0.8, 'c': 0.3})
 a = Semantics.Sentence('a', random_variable=True)

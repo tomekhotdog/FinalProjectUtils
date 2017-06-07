@@ -1,5 +1,6 @@
 import functools as tools
-import Semantics
+
+from PythonSemantics import Semantics
 
 
 # A representation of the Bayesian Network governing

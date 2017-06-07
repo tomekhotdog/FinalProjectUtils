@@ -1,6 +1,6 @@
 import unittest
-import Semantics
-import ExampleFrameworks
+
+from PythonSemantics import ExampleFrameworks, Semantics
 
 a = Semantics.Sentence('a')
 b = Semantics.Sentence('b')
@@ -308,56 +308,56 @@ class TestSemantics(unittest.TestCase):
 
     def test_admissible_simple_framework(self):
         baba = ExampleFrameworks.valid_BABA_framework()
-        self.assertTrue(Semantics.admissible(baba, [b, c]))
+        self.assertTrue(Semantics.is_admissible(baba, [b, c]))
 
     def test_admissible_larger_framework(self):
         baba = ExampleFrameworks.larger_framework()
-        self.assertTrue(Semantics.admissible(baba, [b, e, g, h]))
-        self.assertTrue(Semantics.admissible(baba, [b, e, i]))
-        self.assertTrue(Semantics.admissible(baba, [b, f, h, g, i]))
-        self.assertFalse(Semantics.admissible(baba, [b, e, f, g, h]))
-        self.assertFalse(Semantics.admissible(baba, [b, e, f, i]))
+        self.assertTrue(Semantics.is_admissible(baba, [b, e, g, h]))
+        self.assertTrue(Semantics.is_admissible(baba, [b, e, i]))
+        self.assertTrue(Semantics.is_admissible(baba, [b, f, h, g, i]))
+        self.assertFalse(Semantics.is_admissible(baba, [b, e, f, g, h]))
+        self.assertFalse(Semantics.is_admissible(baba, [b, e, f, i]))
 
     def test_admissible_venice_framework(self):
-        self.assertTrue(Semantics.admissible(venice_baba, [a, c, e]))
-        self.assertTrue(Semantics.admissible(venice_baba, [b, d]))
-        self.assertTrue(Semantics.admissible(venice_baba, [c, e]))
-        self.assertTrue(Semantics.admissible(venice_baba, [e]))
-        self.assertTrue(Semantics.admissible(venice_baba, [d]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a]))
-        self.assertFalse(Semantics.admissible(venice_baba, [b]))
-        self.assertFalse(Semantics.admissible(venice_baba, [c]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, b]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, c]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, d]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [b, c]))
-        self.assertFalse(Semantics.admissible(venice_baba, [b, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [c, d]))
-        self.assertFalse(Semantics.admissible(venice_baba, [d, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, b, c]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, b, d]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, b, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, c, d]))
-        self.assertFalse(Semantics.admissible(venice_baba, [b, c, d]))
-        self.assertFalse(Semantics.admissible(venice_baba, [b, c, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [b, d, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [c, d, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, b, c, d]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, b, c, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, c, d, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [b, c, d, e]))
-        self.assertFalse(Semantics.admissible(venice_baba, [a, b, c, d, e]))
+        self.assertTrue(Semantics.is_admissible(venice_baba, [a, c, e]))
+        self.assertTrue(Semantics.is_admissible(venice_baba, [b, d]))
+        self.assertTrue(Semantics.is_admissible(venice_baba, [c, e]))
+        self.assertTrue(Semantics.is_admissible(venice_baba, [e]))
+        self.assertTrue(Semantics.is_admissible(venice_baba, [d]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [b]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [c]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, b]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, c]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, d]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [b, c]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [b, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [c, d]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [d, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, b, c]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, b, d]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, b, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, c, d]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [b, c, d]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [b, c, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [b, d, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [c, d, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, b, c, d]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, b, c, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, c, d, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [b, c, d, e]))
+        self.assertFalse(Semantics.is_admissible(venice_baba, [a, b, c, d, e]))
 
     def test_generate_admissible_larger_framework(self):
         baba = ExampleFrameworks.larger_framework()
-        admissible_sets = Semantics.generate_admissible(baba)
+        admissible_sets = Semantics.admissible(baba)
         self.assertIn(Semantics.SemanticSet([b, e, i]), admissible_sets)
         self.assertIn(Semantics.SemanticSet([b, e, g, h]), admissible_sets)
         self.assertIn(Semantics.SemanticSet([b, f, g, h, i]), admissible_sets)
 
     def test_generate_admissible_venice_framework(self):
-        admissible_sets = Semantics.generate_admissible(venice_baba)
+        admissible_sets = Semantics.admissible(venice_baba)
         self.assertIn(Semantics.SemanticSet([]), admissible_sets)
         self.assertIn(Semantics.SemanticSet([a, c, e]), admissible_sets)
         self.assertIn(Semantics.SemanticSet([c, e]), admissible_sets)
@@ -368,7 +368,7 @@ class TestSemantics(unittest.TestCase):
 
     # Verified with http://rull.dbai.tuwien.ac.at:8080/ASPARTIX/index.faces
     def test_generate_admissible_s_framework(self):
-        admissible_sets = Semantics.generate_admissible(s_baba)
+        admissible_sets = Semantics.admissible(s_baba)
         self.assertEqual(18, len(admissible_sets))
 
     def test_preferred_larger_framework(self):
