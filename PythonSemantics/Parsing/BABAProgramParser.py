@@ -93,11 +93,11 @@ class BABAProgramParser:
 
             self.rules.append(extracted_rule)
 
-        return Semantics.BABA(self.language,
+        return Semantics.BABA(set(self.language),
                               self.rules,
-                              self.assumptions,
+                              set(self.assumptions),
                               self.contraries,
-                              self.random_variables,
+                              set(self.random_variables),
                               Bayesian.BayesianNetwork(self.bayesian_network))
 
 

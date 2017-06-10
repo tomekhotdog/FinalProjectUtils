@@ -274,11 +274,6 @@ class TestSemantics(unittest.TestCase):
         self.assertEqual(str(Semantics.Sentence('b', random_variable=True, negation=False)), "b")
         self.assertEqual(str(Semantics.Sentence('c', random_variable=True, negation=True)), "~c")
 
-    def test_SemanticSet_str_function(self):
-        self.assertEqual(str(Semantics.SemanticSet([a, b, c, d])), "[a, b, c, d]")
-        self.assertEqual(str(Semantics.SemanticSet([e])), "[e]")
-        self.assertEqual(str(Semantics.SemanticSet([e, d, c, b, a])), "[e, d, c, b, a]")
-
 ############################################################
 
     def test_generate_attacks(self):

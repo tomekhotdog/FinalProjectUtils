@@ -54,3 +54,7 @@ semantics_time_test.txt
 
 PythonSemantics/__pycache__/*
 .idea/*
+
+AspartixSemantics/__pycache__/*
+PythonSemantics/__pycache__/*
+input_for_solver.lp

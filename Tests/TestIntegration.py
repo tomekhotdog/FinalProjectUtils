@@ -23,13 +23,13 @@ class TestIntegration(unittest.TestCase):
                              [ExampleFrameworks.b, ExampleFrameworks.d]]))
 
     def test_integration_complete_sets(self):
-        parser = Parser.BABAProgramParser(filename='Parsing/BABA_program_2')
+        parser = Parser.BABAProgramParser(filename='../PythonSemantics/Parsing/BABA_program_2')
         baba = parser.parse()
         complete_sets = Semantics.complete(baba)
         self.assertEqual(6, len(complete_sets))
 
     def test_integration_framework_with_random_variables(self):
-        parser = Parser.BABAProgramParser(filename='Parsing/BABA_program_3')
+        parser = Parser.BABAProgramParser(filename='../PythonSemantics/Parsing/BABA_program_3')
         baba = parser.parse()
         self.assertEqual(0.64, Semantics.semantic_probability(Semantics.GROUNDED, baba, [ExampleFrameworks.j]))
         self.assertEqual(0.64, Semantics.semantic_probability(Semantics.GROUNDED, baba, [ExampleFrameworks.a]))
@@ -38,7 +38,7 @@ class TestIntegration(unittest.TestCase):
         self.assertEqual(1.0, Semantics.semantic_probability(Semantics.GROUNDED, baba, [ExampleFrameworks.c]))
 
     def test_integration_framework_with_conditional_random_variables(self):
-        parser = Parser.BABAProgramParser(filename='Parsing/BABA_program_4')
+        parser = Parser.BABAProgramParser(filename='../PythonSemantics/Parsing/BABA_program_4')
         baba = parser.parse()
         lang_prob = Semantics.compute_semantic_probability(Semantics.GROUNDED, baba)
         self.assertAlmostEqual(0.775, lang_prob[ExampleFrameworks.b.symbol])
@@ -49,12 +49,12 @@ class TestIntegration(unittest.TestCase):
         self.assertAlmostEqual(1.0, lang_prob[ExampleFrameworks.e.symbol])
 
     def test_integration_framework_with_one_conditional_random_variable(self):
-        parser = Parser.BABAProgramParser(filename='Parsing/BABA_program_5')
+        parser = Parser.BABAProgramParser(filename='../PythonSemantics/Parsing/BABA_program_5')
         baba = parser.parse()
         lang_prob = Semantics.compute_semantic_probability(Semantics.GROUNDED, baba)
         self.assertAlmostEqual(0.2, lang_prob[ExampleFrameworks.a.symbol])
 
     def test_integration_cow_framework(self):
-        baba = Parser.BABAProgramParser(filename='Parsing/BABA_cow_program').parse()
+        baba = Parser.BABAProgramParser(filename='../PythonSemantics/Parsing/BABA_cow_program').parse()
         lang_prob = Semantics.compute_semantic_probability(Semantics.GROUNDED, baba)
         self.assertAlmostEqual(0.72, lang_prob[ExampleFrameworks.HP.symbol])

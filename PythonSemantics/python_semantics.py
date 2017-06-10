@@ -19,6 +19,31 @@ def compute_semantics(framework_string):
     return stable_ext, grounded_ext, complete_ext, preferred_ext, ideal_ext
 
 
-def compute_stable(framework_string):
+def compute_admissible(framework_string):
     framework = create_framework(framework_string)
-    return Semantics.stable(framework)
+    return Semantics.admissible(framework)
+
+
+def compute_stable(framework_string, admissibles=None):
+    framework = create_framework(framework_string)
+    return Semantics.stable(framework, admissibles=admissibles)
+
+
+def compute_grounded(framework_string, admissibles=None):
+    framework = create_framework(framework_string)
+    return Semantics.grounded(framework, admissibles=admissibles)
+
+
+def compute_complete(framework_string, admissibles=None):
+    framework = create_framework(framework_string)
+    return Semantics.complete(framework, admissibles=admissibles)
+
+
+def compute_preferred(framework_string, admissibles=None):
+    framework = create_framework(framework_string)
+    return Semantics.preferred(framework, admissibles=admissibles)
+
+
+def compute_ideal(framework_string, admissibles=None):
+    framework = create_framework(framework_string)
+    return Semantics.ideal(framework, admissibles=admissibles)

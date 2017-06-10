@@ -21,6 +21,11 @@ def base_elements(a_list):
     return [item for sublist in a_list for item in sublist]
 
 
+# Returns if a_list is a subset of another list
+def is_subset(a_list, another_list):
+    return all([item in another_list for item in a_list])
+
+
 # Adapted from: http://stackoverflow.com/questions/1482308/whats-a-good-way-to-combinate-through-a-set
 # example usage: powerset([a,b,c]) --> () (a) (b) (c) (a,b) (a,c) (b,c) (a,b,c)
 def powerset(iterable):

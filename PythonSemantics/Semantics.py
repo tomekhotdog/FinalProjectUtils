@@ -1,6 +1,5 @@
 from PythonSemantics.SemanticsUtils import *
 
-
 GROUNDED = 1
 SCEPTICALLY_PREFERRED = 2
 IDEAL = 3
@@ -15,14 +14,18 @@ class BABA:
     # contraries = {Sentence (assumption) : Contrary}
     # random_variables = [RandomVariable(Sentence, Probability)...]
     def __init__(self, language, rules, assumptions, contraries, random_variables, BN):
-        self.language = language
+        self.language = set(language)
         self.rules = rules
-        self.assumptions = assumptions
+        self.assumptions = set(assumptions)
         self.contraries = contraries
-        self.random_variables = random_variables
+        self.random_variables = set(random_variables)
         self.BN = BN
         self.rv_world = []
 
+        self.derivable_dictionary = {}
+        self.derived_claims = {}
+
+        self.compute_derivable_dictionary()
         self.validate()
 
     # Validates BABA framework
@@ -69,6 +72,53 @@ class BABA:
         for rule in self.rules:
             if rule.head in self.random_variables:
                 raise InvalidBABAException("Random variables cannot be in the heads of rules")
+
+#################################################################################
+
+    def compute_derivable_dictionary(self):
+        for sentence in self.language:
+            self.derivable_dictionary[sentence] = []
+
+        for rule in self.rules:
+            if len(rule.body) == 0:
+                self.derivable_dictionary[rule.head] = [[]]
+                self.derived_claims[rule.head] = True
+            else:
+                self.derivable_dictionary[rule.head].append(list(rule.body))
+
+    # Returns a list of lists of sentences required to derive the claim
+    def compute_required_to_derive(self, claim):
+        if claim in self.derived_claims:
+            return self.derivable_dictionary[claim]  # Memoisation
+
+        required_to_derive_sets = []
+        for required_set in self.derivable_dictionary[claim]:
+            required_to_derive_required_set = [[]]
+            for required_elem in required_set:
+                if required_elem in self.assumptions or required_elem in self.random_variables:
+                    required_to_derive_required_set = list_combinations(required_to_derive_required_set, [[required_elem]])
+
+                else:
+                    required_to_derive_elem = self.compute_required_to_derive(required_elem)
+                    required_to_derive_elem.append([required_elem])  # Can derive an elem if elem is present
+                    required_to_derive_required_set = list_combinations(required_to_derive_required_set, required_to_derive_elem)
+
+            for item in required_to_derive_required_set:
+                required_to_derive_sets.append(item)
+
+        required_to_derive_sets.append([claim])
+        self.derivable_dictionary[claim] = required_to_derive_sets
+        self.derived_claims[claim] = True
+        return required_to_derive_sets
+
+    def derivable(self, claim, sentences):
+        sets_that_derive_claim = self.compute_required_to_derive(claim)
+        for deriving_set in sets_that_derive_claim:
+            if frozenset(deriving_set).issubset(frozenset(sentences)):
+                return True
+        return False
+
+#################################################################################
 
 
 class Sentence:
@@ -142,7 +192,7 @@ class Attack:
 # A container class for a list of sentences
 class SemanticSet:
     def __init__(self, elements):
-        self.elements = elements
+        self.elements = frozenset(elements)
 
     def __hash__(self):
         return sum([hash(item) for item in self.elements])
@@ -172,13 +222,7 @@ class InvalidSemanticsException(Exception):
 
 # Returns whether a claim is derivable in a BABA framework from a set of sentences
 def derivable(baba, claim, sentences):
-    if claim in sentences or claim in baba.rv_world:
-        return True
-    for rule in baba.rules:
-        if claim == rule.head:
-            if all([derivable(baba, element, sentences) for element in rule.body]):
-                return True
-    return False
+    return baba.derivable(claim, set(sentences).union(set(baba.rv_world)))
 
 
 # Returns the complete set of sentences derivable from the BABA framework given a set of sentences
@@ -255,9 +299,9 @@ def defends(baba, assumptions, claim):
         if len(attack.support) == 0:  # Attack cannot be countered
             is_counter_attacked = False
         elif len(support_contraries) == 0:  # Attack support has no contrary
-            is_counter_attacked = True
+            is_counter_attacked = False
         else:
-            is_counter_attacked = any([derivable(baba, elem, assumptions + baba.rv_world) for elem in support_contraries])
+            is_counter_attacked = any([derivable(baba, elem, assumptions) for elem in support_contraries])
 
         if not is_counter_attacked:
             return False
@@ -266,9 +310,13 @@ def defends(baba, assumptions, claim):
 
 
 # Returns whether the list of assumptions is conflict free
+# (Implementation: derivable() is lazily evaluated and memoised.)
 def conflict_free(baba, assumptions):
-    contrary_set = contraries(baba, derivable_set(baba, assumptions))
-    return not any([derivable(baba, contrary, assumptions) for contrary in contrary_set])
+    contrary_set = contraries(baba, assumptions)
+    for contrary in contrary_set:
+        if derivable(baba, contrary, assumptions):
+            return False
+    return True
 
 
 # Returns whether the list of assumptions is admissible in the BABA framework
@@ -281,7 +329,7 @@ def is_admissible(baba, assumptions):
             continue
 
         support_contraries = contraries(baba, attack.support)
-        if not any(derivable(baba, s, (assumptions + baba.rv_world)) for s in support_contraries)\
+        if not any(derivable(baba, s, assumptions) for s in support_contraries)\
                 and len(support_contraries) > 0:
             return False
 
@@ -290,7 +338,8 @@ def is_admissible(baba, assumptions):
 
 # Generates the complete set of admissible sets of assumptions
 def admissible(baba):
-    return set([SemanticSet(elem) for elem in powerset(baba.assumptions) if is_admissible(baba, elem)])
+    ps = powerset(baba.assumptions)
+    return set([SemanticSet(elem) for elem in ps if is_admissible(baba, elem)])
 
 
 ############################################################
@@ -303,6 +352,7 @@ def preferred(baba, admissibles=None):
 
     for ad_set in admissible_sets:
         remaining_sets = admissible_sets - set([ad_set])
+
         if not any([all([elem in current.elements for elem in ad_set.elements])
                     for current in remaining_sets]):
             preferred_sets.append(ad_set)
@@ -346,6 +396,11 @@ def stable(baba, admissibles=None):
     for admissible_set in admissible_sets:
         not_in_set = [elem for elem in baba.assumptions if elem not in admissible_set.elements]
         contraries_to_derive = contraries(baba, not_in_set)
+
+        # Not all assumptions have defined contraries (cannot be attacked)
+        if len(contraries_to_derive) != len(not_in_set):
+            continue
+
         if all([derivable(baba, contrary, admissible_set.elements) for contrary in contraries_to_derive]):
             stable_sets.append(admissible_set)
 
@@ -378,7 +433,7 @@ def semantic_probability(semantics, baba, sentences):
         can_derive_sentence = False
 
         for a_set in semantic_sets:
-            can_derive_sentence = all([derivable(baba, s, a_set.elements + baba.rv_world) for s in sentences])
+            can_derive_sentence = all([derivable(baba, s, a_set.elements) for s in sentences])
 
         if can_derive_sentence:
             acceptability_probability += baba.BN.p_world(world)
@@ -408,7 +463,7 @@ def compute_semantic_probability(semantics, baba):
         world_probability = baba.BN.p_world(world)
 
         for sentence in baba.language:
-            if any(derivable(baba, sentence, a_set.elements + baba.rv_world) for a_set in semantic_sets):
+            if any(derivable(baba, sentence, a_set.elements) for a_set in semantic_sets):
                 language_probability[sentence.symbol] += world_probability
 
     return language_probability

@@ -38,6 +38,26 @@ class TestSemantics(unittest.TestCase):
         self.assertIn(['c', 'd', 'g', 'h'], combinations)
         self.assertEqual(4, len(combinations))
 
+    def test_list_combinations(self):
+        product = Utils.list_combinations([[a]], [[b]])
+        self.assertIn(a, product[0])
+        self.assertIn(b, product[0])
+        self.assertEqual(len(product[0]), 2)
+
+        product = Utils.list_combinations([[a], [b]], [[c]])
+        self.assertIn(a, product[0])
+        self.assertIn(c, product[0])
+
+        self.assertIn(b, product[1])
+        self.assertIn(c, product[1])
+
+        self.assertEqual(len(product[0]), 2)
+        self.assertEqual(len(product[0]), 2)
+
+        product = Utils.list_combinations([[a]], [[]])
+        self.assertIn(a, product[0])
+        self.assertEqual(len(product[0]), 1)
+
     def test_base_elements_trivial_case(self):
         base_elements = Utils.base_elements(list_a)
         self.assertIn('a', base_elements)
