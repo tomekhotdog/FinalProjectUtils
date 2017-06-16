@@ -278,22 +278,22 @@ class TestSemantics(unittest.TestCase):
 
     def test_generate_attacks(self):
         baba = ExampleFrameworks.larger_framework()
-        attacks = Semantics.generate_attacks(baba, [b])
+        attacks = Semantics.get_attacks(baba, [b])
         self.assertIn(Semantics.Attack(b, set([e, f, g, h])), attacks)
         self.assertIn(Semantics.Attack(b, set([e, f, i])), attacks)
-        self.assertEqual(2, len(attacks))
+        self.assertEqual(4, len(attacks))
 
     def test_required_to_derive(self):
         baba = ExampleFrameworks.larger_framework()
-        required_to_derive_a = Semantics.required_to_derive(baba, a)
+        required_to_derive_a = baba.compute_required_to_derive(a)
         self.assertIn([b], required_to_derive_a)
         self.assertIn([e, f], required_to_derive_a)
-        self.assertEqual(2, len(required_to_derive_a))
+        self.assertEqual(3, len(required_to_derive_a))
 
-        self.assertEqual(0, len(Semantics.required_to_derive(baba, j)))
+        self.assertEqual(1, len(baba.compute_required_to_derive(j)))
 
-        required_to_derive_c = Semantics.required_to_derive(baba, c)
-        self.assertEqual(2, len(required_to_derive_c))
+        required_to_derive_c = baba.compute_required_to_derive(c)
+        self.assertEqual(5, len(required_to_derive_c))
         first_derivation = required_to_derive_c[0]
         second_derivation = required_to_derive_c[1]
         all(self.assertIn(element, first_derivation) or self.assertIn(element, second_derivation)

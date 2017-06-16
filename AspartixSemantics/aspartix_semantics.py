@@ -52,7 +52,7 @@ def compute_semantics(framework_string):
     grounded_ext = asp.calculate_grounded_arguments_extensions(SOLVER_INPUT)
     complete_ext = asp.calculate_complete_arguments_extensions(SOLVER_INPUT)
     preferred_ext = asp.calculate_preferred_arguments_extensions(SOLVER_INPUT)
-    ideal_ext = asp.calculate_ideal_arguments_extensions(SOLVER_INPUT)
+    ideal_ext = {} #  asp.calculate_ideal_arguments_extensions(SOLVER_INPUT)
 
     stable_list = [ext for (ext, _) in stable_ext.items()]
     grounded_list = [ext for (ext, _) in grounded_ext.items()]
@@ -64,25 +64,58 @@ def compute_semantics(framework_string):
 
 
 def compute_stable(framework_string):
-    rules_added = None
     res = generate_aba_plus_framework(framework_string)
     abap = res[0]
-
-    # reverse dictionary to map sentences to contraries
-    contr_map = dict((v, k) for k, v in res[1].items())
-
     res = abap.generate_arguments_and_attacks_for_contraries()
-    attacks = res[1]
-    deductions = res[2]
-
-    set_attacks = convert_to_attacks_between_sets(res[1])
-
     asp = ASPARTIX_Interface(abap)
     asp.generate_input_file_for_clingo(SOLVER_INPUT)
-
     stable_ext = asp.calculate_stable_arguments_extensions(SOLVER_INPUT)
 
     return [ext for (ext, _) in stable_ext.items()]
+
+
+def compute_grounded(framework_string):
+    res = generate_aba_plus_framework(framework_string)
+    abap = res[0]
+    res = abap.generate_arguments_and_attacks_for_contraries()
+    asp = ASPARTIX_Interface(abap)
+    asp.generate_input_file_for_clingo(SOLVER_INPUT)
+    grounded_ext = asp.calculate_grounded_arguments_extensions(SOLVER_INPUT)
+
+    return [ext for (ext, _) in grounded_ext.items()]
+
+
+def compute_complete(framework_string):
+    res = generate_aba_plus_framework(framework_string)
+    abap = res[0]
+    res = abap.generate_arguments_and_attacks_for_contraries()
+    asp = ASPARTIX_Interface(abap)
+    asp.generate_input_file_for_clingo(SOLVER_INPUT)
+    complete_ext = asp.calculate_complete_arguments_extensions(SOLVER_INPUT)
+
+    return [ext for (ext, _) in complete_ext.items()]
+
+
+def compute_preferred(framework_string):
+    res = generate_aba_plus_framework(framework_string)
+    abap = res[0]
+    res = abap.generate_arguments_and_attacks_for_contraries()
+    asp = ASPARTIX_Interface(abap)
+    asp.generate_input_file_for_clingo(SOLVER_INPUT)
+    preferred_ext = asp.calculate_preferred_arguments_extensions(SOLVER_INPUT)
+
+    return [ext for (ext, _) in preferred_ext.items()]
+
+
+def compute_ideal(framework_string):
+    res = generate_aba_plus_framework(framework_string)
+    abap = res[0]
+    res = abap.generate_arguments_and_attacks_for_contraries()
+    asp = ASPARTIX_Interface(abap)
+    asp.generate_input_file_for_clingo(SOLVER_INPUT)
+    ideal_ext = asp.calculate_ideal_arguments_extensions(SOLVER_INPUT)
+
+    return [ext for (ext, _) in ideal_ext.items()]
 
 
 def sets_to_str(sets, contr_map={}):

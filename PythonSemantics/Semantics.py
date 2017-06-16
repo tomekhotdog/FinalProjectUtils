@@ -1,4 +1,6 @@
 from PythonSemantics.SemanticsUtils import *
+import multiprocessing as mp
+import copy
 
 GROUNDED = 1
 SCEPTICALLY_PREFERRED = 2
@@ -22,11 +24,14 @@ class BABA:
         self.BN = BN
         self.rv_world = []
 
+        self.validate()
+
         self.derivable_dictionary = {}
         self.derived_claims = {}
+        self.attacks = {}
 
         self.compute_derivable_dictionary()
-        self.validate()
+        self.compute_attacks()
 
     # Validates BABA framework
     def validate(self):
@@ -118,7 +123,19 @@ class BABA:
                 return True
         return False
 
-#################################################################################
+    def compute_attacks(self):
+        for assumption in self.assumptions:
+            attacks = set()
+            if assumption in self.contraries:
+
+                contrary = self.contraries[assumption].contrary
+                required_to_derive_contrary_lists = self.compute_required_to_derive(contrary)
+                for required_list in required_to_derive_contrary_lists:
+                    attacks.add(Attack(assumption, set(required_list)))
+
+            self.attacks[assumption] = attacks
+
+###################################
 
 
 class Sentence:
@@ -233,26 +250,6 @@ def derivable_set(baba, sentences):
     return sentences
 
 
-# Returns a list of lists of sentences required to derive a claim
-def required_to_derive(baba, claim):
-    if claim in baba.assumptions or claim in baba.random_variables:
-        return [[claim]]
-
-    required = []
-    for rule in baba.rules:
-        required_to_derive_claim = []
-        if rule.head == claim:
-            for sentence in rule.body:
-                required_to_derive_sentence = required_to_derive(baba, sentence)
-                required_to_derive_claim = list_combinations(required_to_derive_claim, required_to_derive_sentence)
-
-            for derivation in required_to_derive_claim:
-                if derivable(baba, claim, derivation):
-                    required.append(derivation)
-
-    return required
-
-
 # Returns a set of contraries to the given set of sentences in the BABA framework
 def contraries(baba, sentences):
     contrary_set = set()
@@ -263,22 +260,14 @@ def contraries(baba, sentences):
 
 
 # Returns a set of all potential Attacks against elements of attacked
-def generate_attacks(baba, attacked):
-    attack_set = set()
+def get_attacks(baba, attacked):
+    attacks = set()
     for element in attacked:
-        if element not in baba.contraries:
-            continue
+        if element in baba.attacks:
+            attacks_for_element = baba.attacks[element]
+            attacks = attacks.union(attacks_for_element)
 
-        contrary = baba.contraries[element].contrary
-        required_to_derive_contrary = required_to_derive(baba, contrary)
-        if len(required_to_derive_contrary) == 0:
-            if derivable(baba, contrary, []):
-                attack_set.add(Attack(element, set([])))
-        else:
-            for given_list in required_to_derive_contrary:
-                attack_set.add(Attack(element, set(given_list)))
-
-    return attack_set
+    return attacks
 
 
 # Returns whether the given attack holds in the given baba framework and random variable world
@@ -289,7 +278,7 @@ def valid_attack(baba, attack):
 # Returns whether the set of assumptions defends the claim -
 # where A defends a iff A attacks all sets of assumptions that attack a)
 def defends(baba, assumptions, claim):
-    attacks = generate_attacks(baba, [claim])
+    attacks = baba.attacks[claim]
     for attack in attacks:
 
         if not valid_attack(baba, attack):
@@ -311,20 +300,23 @@ def defends(baba, assumptions, claim):
 
 # Returns whether the list of assumptions is conflict free
 # (Implementation: derivable() is lazily evaluated and memoised.)
-def conflict_free(baba, assumptions):
-    contrary_set = contraries(baba, assumptions)
-    for contrary in contrary_set:
-        if derivable(baba, contrary, assumptions):
+def conflict_free(baba, assumptions, attacks=None):
+    attacks = attacks if attacks is not None else get_attacks(baba, assumptions)
+    for attack in attacks:
+        if attack.support.issubset(assumptions):
             return False
+
     return True
 
 
 # Returns whether the list of assumptions is admissible in the BABA framework
 def is_admissible(baba, assumptions):
-    if not conflict_free(baba, assumptions):
-        return False
+    attacks = get_attacks(baba, assumptions)
 
-    for attack in generate_attacks(baba, assumptions):
+    for attack in attacks:
+        if attack.support.issubset(assumptions):  # Check if conflict free
+            return False
+
         if not valid_attack(baba, attack):
             continue
 
@@ -448,6 +440,8 @@ def compute_semantic_probability(semantics, baba):
         language_probability[sentence.symbol] = 0.0
 
     worlds = generate_worlds(baba.random_variables)
+    worlds = [[]] if len(worlds) == 0 else worlds
+
     for world in worlds:
         baba.set_random_variable_world(world)
 
@@ -487,3 +481,60 @@ def compute_semantic_probabilities(baba):
 
     return grounded_tuples, s_preferred_tuples, ideal_tuples
 
+
+##############################################################################
+# Computes the semantic probability in parallel
+def compute_parallel_semantic_probability(semantics, baba):
+    output = mp.Queue()
+
+    language_probability = {}
+    for sentence in baba.language:
+        language_probability[sentence.symbol] = 0.0
+
+    worlds = generate_worlds(baba.random_variables)
+    worlds = [[]] if len(worlds) == 0 else worlds
+
+    # Setup processes
+    processes = [mp.Process(target=compute_parallel_semantic_probability_for_world,
+                            args=(copy.deepcopy(baba), semantics, world, output))
+                 for world in worlds]
+
+    # Run processes
+    for p in processes:
+        p.start()
+
+    # Exit the completed processes
+    for p in processes:
+        p.join()
+
+    # Get process results from the output queue
+    results = [output.get() for p in processes]
+
+    # Sum marginal probabilities
+    for probability_dictionary in results:
+        for key, value in probability_dictionary.items():
+            language_probability[key] += value
+
+    return language_probability
+
+
+def compute_parallel_semantic_probability_for_world(baba, semantics, world, output):
+    language_probability = {}
+    baba.set_random_variable_world(world)
+
+    if semantics == GROUNDED:
+        semantic_sets = grounded(baba)
+    elif semantics == SCEPTICALLY_PREFERRED:
+        semantic_sets = sceptically_preferred(baba)
+    elif semantics == IDEAL:
+        semantic_sets = ideal(baba)
+    else:
+        raise InvalidSemanticsException("Invalid semantics chosen: " + str(semantics))
+
+    world_probability = baba.BN.p_world(world)
+
+    for sentence in baba.language:
+        if any(derivable(baba, sentence, a_set.elements) for a_set in semantic_sets):
+            language_probability[sentence.symbol] = world_probability
+
+    output.put(language_probability)

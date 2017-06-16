@@ -18,39 +18,40 @@ def compare_semantics(framework_name, framework_string):
 
 
 def compare_execution_times(framework_name, framework_string):
-    admissible = python_semantics.compute_admissible(framework_string)
+    # admissible = python_semantics.compute_admissible(framework_string)
 
     ad_time = time_function_execution(lambda: python_semantics.compute_admissible(framework_string))
     print('Admissible computation time: ' + str(ad_time))
 
-    asp_stable_time = time_function_execution(lambda: aspartix_semantics.compute_stable(framework_string))
-    py_stable_time = time_function_execution(lambda: python_semantics.compute_stable(framework_string, admissibles=admissible))
-
-    asp_grounded_time = time_function_execution(lambda: aspartix_semantics.compute_grounded(framework_string))
-    py_grounded_time = time_function_execution(lambda: python_semantics.compute_grounded(framework_string, admissibles=admissible))
-
-    asp_complete_time = time_function_execution(lambda: aspartix_semantics.compute_complete(framework_string))
-    py_complete_time = time_function_execution(lambda: python_semantics.compute_complete(framework_string, admissibles=admissible))
-
-    asp_preferred_time = time_function_execution(lambda: aspartix_semantics.compute_preferred(framework_string))
-    py_preferred_time = time_function_execution(lambda: python_semantics.compute_preferred(framework_string, admissibles=admissible))
+    # asp_stable_time = time_function_execution(lambda: aspartix_semantics.compute_stable(framework_string))
+    # py_stable_time = time_function_execution(lambda: python_semantics.compute_stable(framework_string, admissibles=admissible))
+    #
+    # asp_grounded_time = time_function_execution(lambda: aspartix_semantics.compute_grounded(framework_string))
+    # py_grounded_time = time_function_execution(lambda: python_semantics.compute_grounded(framework_string, admissibles=admissible))
+    #
+    # asp_complete_time = time_function_execution(lambda: aspartix_semantics.compute_complete(framework_string))
+    # py_complete_time = time_function_execution(lambda: python_semantics.compute_complete(framework_string, admissibles=admissible))
+    #
+    # asp_preferred_time = time_function_execution(lambda: aspartix_semantics.compute_preferred(framework_string))
+    # py_preferred_time = time_function_execution(lambda: python_semantics.compute_preferred(framework_string, admissibles=admissible))
 
     # asp_ideal_time = time_function_execution(lambda: aspartix_semantics.compute_ideal(framework_string))
     # py_ideal_time = time_function_execution(lambda: python_semantics.compute_ideal(framework_string))
 
     with open('semantics_time_test.txt', 'a') as file:
         file.write(framework_name + ': \n')
-        file.write('Admissible. Python: ' + str(ad_time) + '(' + str(len(admissible)) + 'admissible sets)\n')
-        file.write('Stable. Aspartix: ' + str(asp_stable_time) + '. Python: ' + str(py_stable_time + ad_time) + '\n')
-        file.write('Grounded. Aspartix: ' + str(asp_grounded_time) + '. Python: ' + str(py_grounded_time + ad_time) + '\n')
-        file.write('Complete. Aspartix: ' + str(asp_complete_time) + '. Python: ' + str(py_complete_time + ad_time) + '\n')
-        file.write('Preferred. Aspartix: ' + str(asp_preferred_time) + '. Python: ' + str(py_preferred_time + ad_time) + '\n')
-        # file.write('Ideal. Aspartix: ' + str(asp_ideal_time) + '. Python: ' + str(py_ideal_time) + '\n')
+        # file.write('Admissible. Python: ' + str(ad_time) + '(' + str(len(admissible)) + 'admissible sets)\n')
+        # file.write('Stable. Aspartix: ' + str(asp_stable_time))
+        # file.write('Stable. Aspartix: ' + str(asp_stable_time) + '. Python: ' + str(py_stable_time + ad_time) + '\n')
+        # file.write('Grounded. Aspartix: ' + str(asp_grounded_time) + '. Python: ' + str(py_grounded_time + ad_time) + '\n')
+        # file.write('Complete. Aspartix: ' + str(asp_complete_time) + '. Python: ' + str(py_complete_time + ad_time) + '\n')
+        # file.write('Preferred. Aspartix: ' + str(asp_preferred_time) + '. Python: ' + str(py_preferred_time + ad_time) + '\n')
+        # # file.write('Ideal. Aspartix: ' + str(asp_ideal_time) + '. Python: ' + str(py_ideal_time) + '\n')
+        #
+        # aspartix_total = asp_stable_time + asp_grounded_time + asp_complete_time + asp_preferred_time
+        # python_total = ad_time + py_stable_time + py_grounded_time + py_complete_time + py_preferred_time
 
-        aspartix_total = asp_stable_time + asp_grounded_time + asp_complete_time + asp_preferred_time
-        python_total = ad_time + py_stable_time + py_grounded_time + py_complete_time + py_preferred_time
-
-        file.write('All semantics. Aspartix: ' + str(aspartix_total) + '. Python: ' + str(python_total) + '\n')
+        # file.write('All semantics. Aspartix: ' + str(aspartix_total) + '. Python: ' + str(python_total) + '\n')
 
 
 def compare_extensions(framework_name, semantics_name, aspartix_exts, python_exts):
@@ -85,8 +86,7 @@ def time_function_execution(function_to_call):
 def test_generated_frameworks():
     file_names = os.listdir('../generated_frameworks/.')
 
-    # file_names = ['myframework.pl']
-    # file_names = ['exp_acyclic_indvary1_step4_batch_06.pl']
+    file_names = ['framework_51.pl']
 
     for file_name in file_names:
         try:
@@ -121,7 +121,7 @@ def test_generated_frameworks():
 
         try:
             print('Comparing semantics for: ' + file_name)
-            compare_semantics(file_name, framework_string)
+            # compare_semantics(file_name, framework_string)
             compare_execution_times(file_name, framework_string)
 
         except DuplicateSymbolException:
