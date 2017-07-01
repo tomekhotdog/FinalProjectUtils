@@ -135,6 +135,17 @@ class BABA:
 
             self.attacks[assumption] = attacks
 
+    # def compute_counter_attacks(self):
+    #     for assumption in self.assumptions:
+    #         attacks = self.attacks[assumption]
+    #         for attack in attacks:
+    #             counter_attacks = set()
+    #             for elem in attack.support:
+    #                 required_to_derive_support_elem_lists = self.compute_required_to_derive(elem)
+    #                 for required_list in required_to_derive_support_elem_lists:
+    #                     counter_attacks.add(Attack(elem, set(required_list)))
+    #             self.counter_attacks[attack] = counter_attacks
+
 ###################################
 
 
@@ -454,7 +465,7 @@ def compute_semantic_probability(semantics, baba):
         else:
             raise InvalidSemanticsException("Invalid semantics chosen: " + str(semantics))
 
-        world_probability = baba.BN.p_world(world)
+        world_probability = baba.BN.p_world(world) if len(world) > 0 else 1.0
 
         for sentence in baba.language:
             if any(derivable(baba, sentence, a_set.elements) for a_set in semantic_sets):

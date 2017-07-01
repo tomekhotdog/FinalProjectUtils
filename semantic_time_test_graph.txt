@@ -1,0 +1,196 @@
+framework_1.pl: 28(elements) 
+Admissible. Python: 0.018248999999999987(512admissible sets)
+All semantics. Aspartix: 0.01876699999999995. Python: 1.251887
+
+framework_10.pl: 30(elements) 
+Admissible. Python: 0.0013170000000000126(8admissible sets)
+All semantics. Aspartix: 0.01717800000000036. Python: 0.006053000000000086
+
+framework_11.pl: 25(elements) 
+Admissible. Python: 0.0010310000000000041(2admissible sets)
+All semantics. Aspartix: 0.0189769999999998. Python: 0.005466000000000415
+
+framework_12.pl: 14(elements) 
+Admissible. Python: 0.0014089999999999936(5admissible sets)
+All semantics. Aspartix: 0.013343000000000105. Python: 0.005414000000000474
+
+framework_13.pl: 22(elements) 
+Admissible. Python: 0.0007360000000000699(1admissible sets)
+All semantics. Aspartix: 0.016623000000000276. Python: 0.0036529999999999063
+
+framework_14.pl: 26(elements) 
+Admissible. Python: 0.003085999999999922(8admissible sets)
+All semantics. Aspartix: 0.02714500000000042. Python: 0.012763999999999998
+
+framework_15.pl: 25(elements) 
+Admissible. Python: 0.0013449999999999296(8admissible sets)
+All semantics. Aspartix: 0.022101999999999622. Python: 0.007201999999999709
+
+framework_16.pl: 9(elements) 
+Admissible. Python: 0.00042900000000023475(8admissible sets)
+All semantics. Aspartix: 0.016421999999999715. Python: 0.0031600000000004957
+
+framework_17.pl: 25(elements) 
+Admissible. Python: 0.0015720000000001288(4admissible sets)
+All semantics. Aspartix: 0.023138000000000103. Python: 0.005803999999999698
+
+framework_18.pl: 26(elements) 
+Admissible. Python: 0.001919000000000226(8admissible sets)
+All semantics. Aspartix: 0.014169000000000098. Python: 0.010392000000000401
+
+framework_19.pl: 23(elements) 
+Admissible. Python: 0.004978000000000149(64admissible sets)
+All semantics. Aspartix: 0.030802999999999914. Python: 0.04750500000000013
+
+framework_2.pl: 26(elements) 
+Admissible. Python: 0.004610999999999921(64admissible sets)
+All semantics. Aspartix: 0.01645400000000019. Python: 0.024447000000000108
+
+framework_20.pl: 23(elements) 
+Admissible. Python: 0.004342999999999986(64admissible sets)
+All semantics. Aspartix: 0.013748000000000538. Python: 0.03747299999999987
+
+framework_21.pl: 34(elements) 
+Admissible. Python: 0.002529999999999921(8admissible sets)
+All semantics. Aspartix: 0.01809300000000058. Python: 0.009838999999999487
+
+framework_22.pl: 28(elements) 
+Admissible. Python: 0.00312699999999988(8admissible sets)
+All semantics. Aspartix: 0.08820000000000028. Python: 0.015529000000000348
+
+framework_23.pl: 28(elements) 
+Admissible. Python: 0.006769999999999943(8admissible sets)
+All semantics. Aspartix: 0.06593399999999994. Python: 0.017725000000000435
+
+framework_24.pl: 28(elements) 
+Admissible. Python: 0.0026280000000000747(8admissible sets)
+All semantics. Aspartix: 0.02165599999999923. Python: 0.008241000000000831
+
+framework_25.pl: 28(elements) 
+Admissible. Python: 0.0029080000000001327(1admissible sets)
+All semantics. Aspartix: 0.058495000000000186. Python: 0.009123000000000658
+
+framework_26.pl: 26(elements) 
+Admissible. Python: 0.0011019999999994923(2admissible sets)
+All semantics. Aspartix: 0.04518799999999956. Python: 0.006491999999998832
+
+framework_27.pl: 28(elements) 
+Admissible. Python: 0.004421999999999926(16admissible sets)
+All semantics. Aspartix: 0.03556200000000054. Python: 0.016939999999999955
+
+framework_28.pl: 28(elements) 
+Admissible. Python: 0.002184000000000186(4admissible sets)
+All semantics. Aspartix: 0.05115999999999943. Python: 0.007649999999999935
+
+framework_29.pl: 28(elements) 
+Admissible. Python: 0.002594999999999903(2admissible sets)
+All semantics. Aspartix: 0.06486300000000034. Python: 0.008391000000000481
+
+framework_3.pl: 28(elements) 
+Admissible. Python: 0.002765999999999824(32admissible sets)
+All semantics. Aspartix: 0.017668999999999713. Python: 0.012881999999999838
+
+framework_30.pl: 28(elements) 
+Admissible. Python: 0.018066999999999833(16admissible sets)
+All semantics. Aspartix: 0.04320699999999933. Python: 0.07830200000000032
+
+framework_31.pl: 28(elements) 
+Admissible. Python: 0.004010999999999765(8admissible sets)
+All semantics. Aspartix: 0.02862399999999976. Python: 0.014532000000000433
+
+framework_32.pl: 28(elements) 
+Admissible. Python: 0.0018740000000003754(2admissible sets)
+All semantics. Aspartix: 0.03564699999999954. Python: 0.0072510000000001185
+
+framework_33.pl: 24(elements) 
+Admissible. Python: 0.00416699999999981(8admissible sets)
+All semantics. Aspartix: 0.016621999999999915. Python: 0.021879999999999455
+
+framework_34.pl: 13(elements) 
+Admissible. Python: 0.0009869999999998491(16admissible sets)
+All semantics. Aspartix: 0.011128000000000249. Python: 0.006004000000000342
+
+framework_35.pl: 17(elements) 
+Admissible. Python: 0.0022180000000000533(16admissible sets)
+All semantics. Aspartix: 0.01492799999999983. Python: 0.01277700000000026
+
+framework_36.pl: 18(elements) 
+Admissible. Python: 0.002902999999999878(8admissible sets)
+All semantics. Aspartix: 0.02697599999999989. Python: 0.013584000000000263
+
+framework_37.pl: 23(elements) 
+Admissible. Python: 0.0023359999999996717(32admissible sets)
+All semantics. Aspartix: 0.014374999999998916. Python: 0.014182999999999168
+
+framework_38.pl: 24(elements) 
+Admissible. Python: 0.007016000000000133(32admissible sets)
+All semantics. Aspartix: 0.016743999999999204. Python: 0.033464999999999634
+
+framework_39.pl: 20(elements) 
+Admissible. Python: 0.011680000000000135(64admissible sets)
+All semantics. Aspartix: 0.022350000000000314. Python: 0.07666500000000065
+
+framework_4.pl: 21(elements) 
+Admissible. Python: 0.0014570000000002636(32admissible sets)
+All semantics. Aspartix: 0.012087000000000181. Python: 0.008170000000000677
+
+framework_40.pl: 24(elements) 
+Admissible. Python: 0.060420999999999836(4admissible sets)
+All semantics. Aspartix: 0.03018600000000049. Python: 0.2687660000000007
+
+framework_41.pl: 20(elements) 
+Admissible. Python: 0.007547999999999888(16admissible sets)
+All semantics. Aspartix: 0.016837000000000657. Python: 0.04046099999999919
+
+framework_42.pl: 24(elements) 
+Admissible. Python: 0.008276999999999646(32admissible sets)
+All semantics. Aspartix: 0.01516200000000012. Python: 0.0597799999999995
+
+framework_44.pl: 23(elements) 
+Admissible. Python: 0.0037650000000004624(64admissible sets)
+All semantics. Aspartix: 0.030872000000000455. Python: 0.03179299999999996
+
+framework_45.pl: 23(elements) 
+Admissible. Python: 0.0021210000000002616(16admissible sets)
+All semantics. Aspartix: 0.020608000000000626. Python: 0.008543000000000411
+
+framework_46.pl: 20(elements) 
+Admissible. Python: 0.44752999999999954(8admissible sets)
+All semantics. Aspartix: 0.016118999999999772. Python: 2.4963849999999974
+
+framework_47.pl: 20(elements) 
+Admissible. Python: 0.0025770000000004956(16admissible sets)
+All semantics. Aspartix: 0.015416000000001873. Python: 0.0105530000000007
+
+framework_49.pl: 24(elements) 
+Admissible. Python: 0.0025740000000000762(16admissible sets)
+All semantics. Aspartix: 0.01962499999999956. Python: 0.008853999999998585
+
+framework_5.pl: 34(elements) 
+Admissible. Python: 0.00215799999999966(16admissible sets)
+All semantics. Aspartix: 0.01868499999999962. Python: 0.009401000000000437
+
+framework_50.pl: 21(elements) 
+Admissible. Python: 0.003174999999999706(32admissible sets)
+All semantics. Aspartix: 0.014571999999999363. Python: 0.014965000000001005
+
+framework_51.pl: 56(elements) 
+Admissible. Python: 1.4326149999999984(2048admissible sets)
+All semantics. Aspartix: 0.04595700000000491. Python: 62.139434000000016
+
+framework_6.pl: 20(elements) 
+Admissible. Python: 0.0011779999999959045(8admissible sets)
+All semantics. Aspartix: 0.014948999999987223. Python: 0.0068590000000199325
+
+framework_7.pl: 25(elements) 
+Admissible. Python: 0.0023569999999892843(16admissible sets)
+All semantics. Aspartix: 0.01459999999998729. Python: 0.008403999999984535
+
+framework_8.pl: 23(elements) 
+Admissible. Python: 0.001396999999997206(8admissible sets)
+All semantics. Aspartix: 0.014807000000004678. Python: 0.007374000000027081
+
+framework_9.pl: 27(elements) 
+Admissible. Python: 0.0013690000000110558(16admissible sets)
+All semantics. Aspartix: 0.013661999999968089. Python: 0.006928999999999519
+

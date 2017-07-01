@@ -9,3 +9,4 @@ contrary(b, _b).
 contrary(c, _c).
 myRV(s, 0.6).
 myRV(t, 0.4).
+

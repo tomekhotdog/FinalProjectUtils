@@ -1,0 +1,200 @@
+framework_1.pl: stable extensions match.
+framework_1.pl: grounded extensions match.
+framework_1.pl: complete extensions match.
+framework_1.pl: preferred extensions match.
+framework_10.pl: stable extensions match.
+framework_10.pl: grounded extensions match.
+framework_10.pl: complete extensions match.
+framework_10.pl: preferred extensions match.
+framework_11.pl: stable extensions match.
+framework_11.pl: grounded extensions match.
+framework_11.pl: complete extensions match.
+framework_11.pl: preferred extensions match.
+framework_12.pl: stable extensions match.
+framework_12.pl: grounded extensions match.
+framework_12.pl: complete extensions match.
+framework_12.pl: preferred extensions match.
+framework_13.pl: stable extensions match.
+framework_13.pl: grounded extensions match.
+framework_13.pl: complete extensions match.
+framework_13.pl: preferred extensions match.
+framework_14.pl: stable extensions match.
+framework_14.pl: grounded extensions match.
+framework_14.pl: complete extensions match.
+framework_14.pl: preferred extensions match.
+framework_15.pl: stable extensions match.
+framework_15.pl: grounded extensions match.
+framework_15.pl: complete extensions match.
+framework_15.pl: preferred extensions match.
+framework_16.pl: stable extensions match.
+framework_16.pl: grounded extensions match.
+framework_16.pl: complete extensions match.
+framework_16.pl: preferred extensions match.
+framework_17.pl: stable extensions match.
+framework_17.pl: grounded extensions match.
+framework_17.pl: complete extensions match.
+framework_17.pl: preferred extensions match.
+framework_19.pl: stable extensions match.
+framework_19.pl: grounded extensions match.
+framework_19.pl: complete extensions match.
+framework_19.pl: preferred extensions match.
+framework_2.pl: stable extensions match.
+framework_2.pl: grounded extensions match.
+framework_2.pl: complete extensions match.
+framework_2.pl: preferred extensions match.
+framework_20.pl: stable extensions match.
+framework_20.pl: grounded extensions match.
+framework_20.pl: complete extensions match.
+framework_20.pl: preferred extensions match.
+framework_3.pl: stable extensions match.
+framework_3.pl: grounded extensions match.
+framework_3.pl: complete extensions match.
+framework_3.pl: preferred extensions match.
+framework_4.pl: stable extensions match.
+framework_4.pl: grounded extensions match.
+framework_4.pl: complete extensions match.
+framework_4.pl: preferred extensions match.
+framework_5.pl: stable extensions match.
+framework_5.pl: grounded extensions match.
+framework_5.pl: complete extensions match.
+framework_5.pl: preferred extensions match.
+framework_6.pl: stable extensions match.
+framework_6.pl: grounded extensions match.
+framework_6.pl: complete extensions match.
+framework_6.pl: preferred extensions match.
+framework_7.pl: stable extensions match.
+framework_7.pl: grounded extensions match.
+framework_7.pl: complete extensions match.
+framework_7.pl: preferred extensions match.
+framework_9.pl: stable extensions match.
+framework_9.pl: grounded extensions match.
+framework_9.pl: complete extensions match.
+framework_9.pl: preferred extensions match.
+
+
+framework_1.pl: 
+Admissible. Python: 0.03935599999999995(512admissible sets)
+Stable. Aspartix: 0.006788999999999934. Python: 0.051310999999999884
+Grounded. Aspartix: 0.004802999999999891. Python: 0.06772200000000006
+Complete. Aspartix: 0.005017999999999967. Python: 0.06583600000000023
+Preferred. Aspartix: 0.004326000000000052. Python: 1.1427730000000003
+All semantics. Aspartix: 0.020935999999999844. Python: 1.2095740000000006
+framework_10.pl: 
+Admissible. Python: 0.002974000000000032(8admissible sets)
+Stable. Aspartix: 0.005076999999999554. Python: 0.004915000000000447
+Grounded. Aspartix: 0.00456499999999993. Python: 0.006824000000000385
+Complete. Aspartix: 0.003878999999999966. Python: 0.005872999999999795
+Preferred. Aspartix: 0.0038289999999996382. Python: 0.004122000000000181
+All semantics. Aspartix: 0.01734999999999909. Python: 0.012812000000000712
+framework_11.pl: 
+Admissible. Python: 0.0016199999999999548(2admissible sets)
+Stable. Aspartix: 0.0050520000000000564. Python: 0.0027409999999994383
+Grounded. Aspartix: 0.005663999999999891. Python: 0.003298000000000023
+Complete. Aspartix: 0.005482000000000209. Python: 0.003278999999999588
+Preferred. Aspartix: 0.005488999999999855. Python: 0.0023520000000001318
+All semantics. Aspartix: 0.021687000000000012. Python: 0.006809999999999317
+framework_12.pl: 
+Admissible. Python: 0.00207799999999958(5admissible sets)
+Stable. Aspartix: 0.0035490000000004684. Python: 0.002838000000000118
+Grounded. Aspartix: 0.0036929999999997243. Python: 0.0036479999999996515
+Complete. Aspartix: 0.004237000000000268. Python: 0.003905999999999299
+Preferred. Aspartix: 0.006415999999999755. Python: 0.0025959999999991545
+All semantics. Aspartix: 0.017895000000000216. Python: 0.006753999999999483
+framework_13.pl: 
+Admissible. Python: 0.0010249999999998316(1admissible sets)
+Stable. Aspartix: 0.004090999999999845. Python: 0.002034999999999787
+Grounded. Aspartix: 0.004089000000000009. Python: 0.002151000000000014
+Complete. Aspartix: 0.00433400000000006. Python: 0.0020559999999996137
+Preferred. Aspartix: 0.00456700000000021. Python: 0.0017529999999998935
+All semantics. Aspartix: 0.017081000000000124. Python: 0.004919999999999813
+framework_14.pl: 
+Admissible. Python: 0.05990599999999979(8admissible sets)
+Stable. Aspartix: 0.005740999999999552. Python: 0.06535199999999941
+Grounded. Aspartix: 0.00581200000000015. Python: 0.08324700000000007
+Complete. Aspartix: 0.007444000000000006. Python: 0.07967199999999952
+Preferred. Aspartix: 0.0073619999999992025. Python: 0.060797999999999686
+All semantics. Aspartix: 0.02635899999999891. Python: 0.10935099999999931
+framework_15.pl: 
+Admissible. Python: 0.002111000000000196(8admissible sets)
+Stable. Aspartix: 0.00479699999999994. Python: 0.003554000000000279
+Grounded. Aspartix: 0.00501999999999958. Python: 0.005044999999999966
+Complete. Aspartix: 0.005446999999999758. Python: 0.0051920000000005295
+Preferred. Aspartix: 0.005621000000000098. Python: 0.0034010000000006535
+All semantics. Aspartix: 0.020884999999999376. Python: 0.01085900000000084
+framework_16.pl: 
+Admissible. Python: 0.0006189999999999252(8admissible sets)
+Stable. Aspartix: 0.0027809999999997004. Python: 0.0012470000000002202
+Grounded. Aspartix: 0.002874999999999517. Python: 0.0013170000000002346
+Complete. Aspartix: 0.002819000000000127. Python: 0.0012819999999997833
+Preferred. Aspartix: 0.0027610000000000134. Python: 0.0010980000000002654
+All semantics. Aspartix: 0.011235999999999358. Python: 0.003087000000000728
+framework_17.pl: 
+Admissible. Python: 0.0017700000000000493(4admissible sets)
+Stable. Aspartix: 0.005738000000000021. Python: 0.0029980000000002782
+Grounded. Aspartix: 0.00571599999999961. Python: 0.003969999999999807
+Complete. Aspartix: 0.005600999999999967. Python: 0.004240999999999939
+Preferred. Aspartix: 0.006839999999999957. Python: 0.002502999999999922
+All semantics. Aspartix: 0.023894999999999555. Python: 0.008401999999999799
+framework_19.pl: 
+Admissible. Python: 0.028662000000000187(64admissible sets)
+Stable. Aspartix: 0.003770999999999969. Python: 0.033876999999999935
+Grounded. Aspartix: 0.005605000000000082. Python: 0.05249400000000026
+Complete. Aspartix: 0.003710000000000324. Python: 0.050696000000000296
+Preferred. Aspartix: 0.0037929999999999353. Python: 0.04181400000000046
+All semantics. Aspartix: 0.01687900000000031. Python: 0.0928950000000004
+framework_2.pl: 
+Admissible. Python: 0.008057999999999677(64admissible sets)
+Stable. Aspartix: 0.004614000000000562. Python: 0.010944999999999983
+Grounded. Aspartix: 0.006280999999999981. Python: 0.03468899999999975
+Complete. Aspartix: 0.004808999999999841. Python: 0.03437299999999954
+Preferred. Aspartix: 0.0044999999999997264. Python: 0.020944000000000074
+All semantics. Aspartix: 0.02020400000000011. Python: 0.07677700000000032
+framework_20.pl: 
+Admissible. Python: 0.03698400000000035(64admissible sets)
+Stable. Aspartix: 0.00371100000000002. Python: 0.04530300000000054
+Grounded. Aspartix: 0.003786999999999985. Python: 0.06365700000000007
+Complete. Aspartix: 0.003994000000000497. Python: 0.0659730000000005
+Preferred. Aspartix: 0.004681999999999853. Python: 0.054553000000000296
+All semantics. Aspartix: 0.016174000000000355. Python: 0.11853400000000036
+framework_3.pl: 
+Admissible. Python: 0.010008000000000017(32admissible sets)
+Stable. Aspartix: 0.0066670000000002005. Python: 0.012763999999999776
+Grounded. Aspartix: 0.004440000000000666. Python: 0.017938000000000898
+Complete. Aspartix: 0.005766000000000382. Python: 0.016458000000000084
+Preferred. Aspartix: 0.00386299999999995. Python: 0.013510000000000133
+All semantics. Aspartix: 0.020736000000001198. Python: 0.03064600000000084
+framework_4.pl: 
+Admissible. Python: 0.001875000000000071(32admissible sets)
+Stable. Aspartix: 0.002879000000000076. Python: 0.0032250000000004775
+Grounded. Aspartix: 0.003074999999999939. Python: 0.003490000000000215
+Complete. Aspartix: 0.0031690000000006435. Python: 0.0034160000000005297
+Preferred. Aspartix: 0.003409999999999691. Python: 0.005204999999999238
+All semantics. Aspartix: 0.01253300000000035. Python: 0.009711000000000247
+framework_5.pl: 
+Admissible. Python: 0.009165000000000312(16admissible sets)
+Stable. Aspartix: 0.0062200000000007805. Python: 0.012513000000000218
+Grounded. Aspartix: 0.0057349999999996015. Python: 0.01795800000000103
+Complete. Aspartix: 0.007356000000000584. Python: 0.020900999999999392
+Preferred. Aspartix: 0.006742000000000026. Python: 0.0113070000000004
+All semantics. Aspartix: 0.026053000000000992. Python: 0.035184000000000104
+framework_6.pl: 
+Admissible. Python: 0.0019780000000002573(8admissible sets)
+Stable. Aspartix: 0.0037130000000002994. Python: 0.003473999999999755
+Grounded. Aspartix: 0.003908000000000023. Python: 0.0060869999999999536
+Complete. Aspartix: 0.005150999999999684. Python: 0.0049080000000003565
+Preferred. Aspartix: 0.00541299999999989. Python: 0.0027940000000006293
+All semantics. Aspartix: 0.018184999999999896. Python: 0.011328999999999922
+framework_7.pl: 
+Admissible. Python: 0.005880999999999581(16admissible sets)
+Stable. Aspartix: 0.004481999999999431. Python: 0.007634999999999614
+Grounded. Aspartix: 0.0039050000000004914. Python: 0.00820899999999991
+Complete. Aspartix: 0.003411000000000719. Python: 0.008224000000000231
+Preferred. Aspartix: 0.003678999999999988. Python: 0.007369999999999877
+All semantics. Aspartix: 0.01547700000000063. Python: 0.01379500000000089
+framework_9.pl: 
+Admissible. Python: 0.00246999999999975(16admissible sets)
+Stable. Aspartix: 0.003630000000000244. Python: 0.003829999999999778
+Grounded. Aspartix: 0.0036569999999995773. Python: 0.004661999999999722
+Complete. Aspartix: 0.003773999999999056. Python: 0.004568999999999157
+Preferred. Aspartix: 0.0035500000000006082. Python: 0.003846000000000238
+All semantics. Aspartix: 0.014610999999999486. Python: 0.009496999999999645
